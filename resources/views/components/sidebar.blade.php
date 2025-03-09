@@ -4,10 +4,17 @@
   <div class="h-full px-3 pb-4 bg-ghost-white dark:bg-gray-800">
     <ul class="space-y-2 font-medium">
       <li>
-        <a href="{{ route('dataset') }}"
-          class="flex items-center p-2 text-primary-800 rounded-lg dark:text-white hover:bg-primary-800 hover:text-ghost-white dark:hover:bg-gray-700 group">Dataset
-        </a>
+        <x-nav-link href="{{ route('dataset') }}" :active="request()->routeIs('dataset')">Dataset</x-nav-link>
+        <x-nav-link href="{{ route('dataset') }}" :active="request()->is('')">Clean Data</x-nav-link>
+        <x-nav-link href="#"
+          onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">Logout</x-nav-link>
       </li>
     </ul>
   </div>
 </aside>
+
+
+{{-- form trigger logout  --}}
+<form action="{{ route('logout') }}" id="logoutForm" method="POST" class="hidden">
+  @csrf
+</form>

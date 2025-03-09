@@ -25,6 +25,8 @@
     <x-header>{{ $title }}</x-header>
     {{ $slot }}
   </div>
+
+  @stack('script')
 </body>
 
 </html>
