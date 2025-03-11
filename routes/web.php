@@ -8,4 +8,4 @@ Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::post('login', [AuthController::class, 'login'])->name('login.process');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('dataset', [DatasetController::class, 'index'])->name('dataset');
+Route::resource('dataset', DatasetController::class);

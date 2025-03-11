@@ -4,8 +4,8 @@
   <div class="h-full px-3 pb-4 bg-ghost-white dark:bg-gray-800">
     <ul class="space-y-2 font-medium">
       <li>
-        <x-nav-link href="{{ route('dataset') }}" :active="request()->routeIs('dataset')">Dataset</x-nav-link>
-        <x-nav-link href="{{ route('dataset') }}" :active="request()->is('')">Clean Data</x-nav-link>
+        <x-nav-link href="{{ route('dataset.index') }}" :active="request()->routeIs('dataset.index')">Dataset</x-nav-link>
+        <x-nav-link href="{{ route('dataset.index') }}" :active="request()->routeIs('')">Clean Data</x-nav-link>
         <x-nav-link href="#"
           onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">Logout</x-nav-link>
       </li>
