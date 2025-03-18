@@ -7,9 +7,7 @@
 @source "../**/*.vue";
 
 @theme {
-    --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif,
-        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-        "Noto Color Emoji";
+    --font-sans: "Instrument Sans", "system-ui", sans-serif;
 
     --color-primary-50: #eff6ff;
     --color-primary-100: #dbeafe;
@@ -24,11 +22,6 @@
     --color-primary-950: #172554;
 
     --color-ghost-white: #f8f8f8;
-
-    --color-success: #16a34a;
-    --color-danger: #ef4444;
-    --color-warning: #fbbf24;
-    --color-info: #3b82f6;
 }
 
 @plugin "flowbite/plugin";

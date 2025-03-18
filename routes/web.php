@@ -8,4 +8,9 @@ Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::post('login', [AuthController::class, 'login'])->name('login.process');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::resource('dataset', DatasetController::class);
+Route::prefix('dataset')->controller(DatasetController::class)->group(function () {
+	Route::get('/', 'index')->name('dataset.index');
+	Route::get('import', 'importCSV')->name('dataset.import');
+	Route::post('import', 'importData')->name('dataset.import.process');
+	Route::delete('delete-all', 'deleteAll')->name('dataset.delete-all');
+});

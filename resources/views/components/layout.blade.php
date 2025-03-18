@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-gray-100">
 
 <head>
   <meta charset="UTF-8">
@@ -7,22 +7,23 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>{{ $title }}</title>
 
-  <link rel="preconnect" href="https://fonts.bunny.net">
-  <link href="https://fonts.bunny.net/css?family=figtree:400,500,600" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap"
+    rel="stylesheet">
 
   @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
     @vite(['resources/css/app.css', 'resources/js/app.js'])
   @endif
 </head>
 
-<body class="font-sans antialiased">
+<body class="antialiased h-full">
 
   <x-navbar></x-navbar>
 
-  <x-sidebar></x-sidebar>
+  <x-header>{{ $title }}</x-header>
 
-  <div class="p-4 sm:ml-64">
-    <x-header>{{ $title }}</x-header>
+  <div class="p-6">
     {{ $slot }}
   </div>
 
