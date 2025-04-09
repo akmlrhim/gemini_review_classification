@@ -2,7 +2,7 @@
   <x-slot:title>{{ $title }}</x-slot:title>
 
   <div class="flex items-center justify-center">
-    <div class="w-1/2">
+    <div class="lg:w-1/2 sm:w-full md:w-full">
       <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="small_size">
           Masukkan file dataset (.csv)
@@ -20,13 +20,11 @@
           <div>
             <a href="{{ route('dataset.index') }}"
               class="px-5 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition duration-300 me-2 text-sm">
-              Kembali
-            </a>
+              Kembali</a>
 
             <button type="submit"
               class="px-5 py-2 bg-blue-600 font-medium text-white rounded-lg hover:bg-blue-700 transition duration-300 text-sm">
-              Upload File
-            </button>
+              Upload File</button>
 
           </div>
         </form>

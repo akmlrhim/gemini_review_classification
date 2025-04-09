@@ -7,17 +7,12 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>{{ $title }}</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap"
-    rel="stylesheet">
-
   @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
     @vite(['resources/css/app.css', 'resources/js/app.js'])
   @endif
 </head>
 
-<body class="font-sans antialiased flex items-center justify-center min-h-screen overflow-auto">
+<body class="font-inter antialiased flex dark:bg-gray-900 items-center justify-center min-h-screen overflow-auto">
   <section class="w-full max-w-md px-6">
     <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
 
