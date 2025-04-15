@@ -13,7 +13,18 @@ return new class extends Migration
 	{
 		Schema::create('datasets', function (Blueprint $table) {
 			$table->id();
-			$table->longText('review');
+			$table->string('reviewId', 64);
+			$table->string('userName', 64);
+			$table->string('userImage', 120);
+			$table->longText('content');
+			$table->integer('score');
+			$table->integer('thumbUpCount');
+			$table->string('reviewCreatedVersion', 36);
+			$table->string('at', 64);
+			$table->string('replyContent', 255);
+			$table->string('repliedAt', 64);
+			$table->string('appVersion', 24);
+
 			$table->timestamps();
 		});
 	}

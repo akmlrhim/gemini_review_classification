@@ -14,16 +14,16 @@
               class="block w-full text-xs text-gray-90x0 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
               id="small_size" type="file" name="file">
             @error('file')
-              <small class="text-red-700 text-sm">{{ $message }}</small>
+              <small class="text-red-700 dark:text-red-400 text-sm">{{ $message }}</small>
             @enderror
           </div>
           <div>
             <a href="{{ route('dataset.index') }}"
-              class="px-5 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition duration-300 me-2 text-sm">
+              class="px-2 py-1 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition duration-300 me-2 text-sm">
               Kembali</a>
 
             <button type="submit"
-              class="px-5 py-2 bg-blue-600 font-medium text-white rounded-lg hover:bg-blue-700 transition duration-300 text-sm">
+              class="px-2 py-1 bg-blue-600 font-medium text-white rounded-lg hover:bg-blue-700 transition duration-300 text-sm">
               Upload File</button>
 
           </div>

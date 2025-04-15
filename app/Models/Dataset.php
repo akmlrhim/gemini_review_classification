@@ -6,5 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Dataset extends Model
 {
-	protected $fillable = ['review'];
+	protected $fillable = [
+		'reviewId',
+		'userName',
+		'userImage',
+		'content',
+		'score',
+		'thumbUpCount',
+		'reviewCreatedVersion',
+		'at',
+		'replyContent',
+		'repliedAt',
+		'appVersion'
+	];
 }

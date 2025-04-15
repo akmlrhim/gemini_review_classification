@@ -11,9 +11,7 @@ class DatasetController extends Controller
 	public function index()
 	{
 		$title = 'Dataset';
-		$dataset = DB::table('datasets')
-			->orderBy('created_at', 'asc')
-			->paginate(10);
+		$dataset = DB::table('datasets')->paginate(10);
 
 		return view('dataset.index', compact('title', 'dataset'));
 	}
@@ -27,7 +25,7 @@ class DatasetController extends Controller
 	public function importData(Request $request)
 	{
 		$request->validate([
-			'file' => 'required',
+			'file' => 'required|mimes:csv',
 		]);
 
 		$file = $request->file('file');
@@ -53,23 +51,48 @@ class DatasetController extends Controller
 		}
 		fclose($handle);
 
-		return redirect()->route('dataset.index')->with('success', 'Dataset import successfully');
+		return redirect()->route('dataset.index')->with('success', 'Dataset import successfully !');
 	}
 
 	public function getChunkData($chunkdata)
 	{
 		foreach ($chunkdata as $column) {
-			$review = $column[0];
+			$reviewId = $column[0];
+			$userName = $column[1];
+			$userImage = $column[2];
+			$content = $column[3];
+			$score = $column[4];
+			$thumbUpCount = $column[5];
+			$reviewCreatedVersion = $column[6];
+			$at = $column[7];
+			$replyContent = $column[8];
+			$repliedAt = $column[9];
+			$appVersion = $column[10];
 
 			$dataset = new Dataset();
-			$dataset->review = $review;
+			$dataset->reviewId = $reviewId;
+			$dataset->userName = $userName;
+			$dataset->userImage = $userImage;
+			$dataset->content = $content;
+			$dataset->score = $score;
+			$dataset->thumbUpCount = $thumbUpCount;
+			$dataset->reviewCreatedVersion = $reviewCreatedVersion;
+			$dataset->at = $at;
+			$dataset->replyContent = $replyContent;
+			$dataset->repliedAt = $repliedAt;
+			$dataset->appVersion = $appVersion;
 			$dataset->save();
 		}
 	}
 
 	public function deleteAll()
 	{
+		$datasetCount = DB::table('datasets')->count();
+		if ($datasetCount == 0) {
+			return redirect()->back()->with('info', 'Dataset is already empty!');
+		}
+
 		DB::table('datasets')->truncate();
-		return redirect()->route('dataset.index')->with('success', 'Dataset deleted successfully');
+		return redirect()->route('dataset.index')->with('success', 'Dataset deleted successfully!');
 	}
 }

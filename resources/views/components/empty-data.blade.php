@@ -1,3 +1,3 @@
 <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-  <span class="font-medium text-sm">Empty data !</span>
+  <span class="font-medium text-sm">Empty !</span>
 </div>

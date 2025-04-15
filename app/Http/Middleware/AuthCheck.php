@@ -19,6 +19,7 @@ class AuthCheck
 		if (!Auth::check()) {
 			return redirect()->route('login')->with('error', 'Silahkan login terlebih dahulu');
 		}
+
 		return $next($request);
 	}
 }
