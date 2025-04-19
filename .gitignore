@@ -21,7 +21,8 @@ composer.json
 composer.lock
 package.json
 package-lock.json
-
+vite.config.js
+.env.example
 
 /auth.json
 /.fleet
