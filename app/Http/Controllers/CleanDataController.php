@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class SentimentController extends Controller
+class CleanDataController extends Controller
 {
-	public function index() {}
+    //
 }

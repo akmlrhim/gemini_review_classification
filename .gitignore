@@ -1,3 +1,4 @@
+use cache;
 /.phpunit.cache
 /node_modules
 /public/build
@@ -15,6 +16,13 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+
+composer.json
+composer.lock
+package.json
+package-lock.json
+
+
 /auth.json
 /.fleet
 /.idea

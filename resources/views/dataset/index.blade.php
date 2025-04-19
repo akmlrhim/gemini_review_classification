@@ -76,7 +76,7 @@
                 {{ $row->userName }}
               </td>
               <td class="px-6 py-1">
-                <img src="{{ $row->userImage }}" alt="" class="w-10">
+                <img src="{{ $row->userImage }}" alt="{{ $row->userName }}" class="w-10">
               </td>
               <td class="px-6 py-1">
                 {{ $row->content }}
