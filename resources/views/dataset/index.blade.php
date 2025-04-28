@@ -1,29 +1,14 @@
 <x-layout>
   <x-slot:title>{{ $title }}</x-slot:title>
 
-  <div class="mb-4">
-    <a href="{{ route('dataset.import') }}"
-      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-1 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Import
-      data</a>
-
-    <form action="{{ route('dataset.delete-all') }}" method="POST" class="inline" onsubmit="confirmDelete(event)">
-      @csrf
-      @method('DELETE')
-      <button type="submit"
-        class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-2 py-1 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">Delete
-        all data</button>
-    </form>
-
-  </div>
-
   <x-alert></x-alert>
 
   @if ($dataset->isEmpty())
     <x-empty-data></x-empty-data>
   @else
     <div class="relative overflow-x-auto rounded-md">
-      <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <table class="w-full text-left rtl:text-right text-black dark:text-gray-400 border-b dark:border-gray-700">
+        <thead class="text-sm text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" class="px-6 py-2">
               #
@@ -44,7 +29,7 @@
               score
             </th>
             <th scope="col" class="px-6 py-2">
-              thumbUpCount
+              thumbsUpCount
             </th>
             <th scope="col" class="px-6 py-2">
               reviewCreatedVersion
@@ -65,8 +50,8 @@
         </thead>
         <tbody>
           @foreach ($dataset as $row)
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-              <th scope="row" class="px-6 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            <tr class="text-sm bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+              <th scope="row" class="px-6 py-1 font-medium text-black whitespace-nowrap dark:text-white">
                 {{ $dataset->firstItem() + $loop->index }}
               </th>
               <td class="px-6 py-1">
@@ -85,7 +70,7 @@
                 {{ $row->score }}
               </td>
               <td class="px-6 py-1">
-                {{ $row->thumbUpCount }}
+                {{ $row->thumbsUpCount }}
               </td>
               <td class="px-6 py-1">
                 {{ $row->reviewCreatedVersion }}

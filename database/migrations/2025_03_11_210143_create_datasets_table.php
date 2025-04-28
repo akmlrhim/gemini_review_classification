@@ -18,12 +18,12 @@ return new class extends Migration
 			$table->string('userImage', 120);
 			$table->longText('content');
 			$table->integer('score');
-			$table->integer('thumbUpCount');
-			$table->string('reviewCreatedVersion', 36);
-			$table->string('at', 64);
-			$table->string('replyContent', 255);
-			$table->string('repliedAt', 64);
-			$table->string('appVersion', 24);
+			$table->integer('thumbsUpCount')->nullable();
+			$table->string('reviewCreatedVersion', 36)->nullable();
+			$table->string('at', 64)->nullable();
+			$table->longText('replyContent')->nullable();
+			$table->string('repliedAt', 64)->nullable();
+			$table->string('appVersion', 24)->nullable();
 
 			$table->timestamps();
 		});
