@@ -13,13 +13,13 @@ return new class extends Migration
 	{
 		Schema::create('preprocessing', function (Blueprint $table) {
 			$table->id();
-			$table->text('content');
-			$table->text('cleaned_content');
-			$table->text('case_folding');
-			$table->text('tokenize');
-			$table->text('stopword');
-			$table->text('stemmed');
-			$table->string('label', 32);
+			$table->text('content')->nullable();
+			$table->text('cleaned')->nullable();
+			$table->text('case_folding')->nullable();
+			$table->text('stopword')->nullable();
+			$table->text('lemmatized')->nullable();
+			$table->text('tokenize')->nullable();
+			$table->string('label', 32)->nullable();
 			$table->timestamps();
 		});
 	}

@@ -3,6 +3,8 @@
 
   <x-alert></x-alert>
 
+  <x-dataset-action></x-dataset-action>
+
   @if ($dataset->isEmpty())
     <x-empty-data></x-empty-data>
   @else
@@ -95,21 +97,8 @@
   @endif
 
 
-  <div class="mt-3">
+  <div class="mb-3">
     {{ $dataset->links() }}
   </div>
-
-
-  @push('script')
-    <script>
-      function confirmDelete(event) {
-        event.preventDefault();
-
-        if (confirm("Apakah Anda yakin ingin menghapus semua data?")) {
-          event.target.submit();
-        }
-      }
-    </script>
-  @endpush
 
 </x-layout>

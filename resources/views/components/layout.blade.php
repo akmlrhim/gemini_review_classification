@@ -8,18 +8,21 @@
   <title>{{ $title }}</title>
   <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.ico') }}">
 
+  <link rel="preconnect" href="https://fonts.bunny.net">
+  <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
   @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
     @vite(['resources/css/app.css', 'resources/js/app.js'])
   @endif
 </head>
 
-<body class="antialiased h-full font-inter">
+<body class="antialiased h-full font-sans">
 
   <x-navbar></x-navbar>
 
   <x-header>{{ $title }}</x-header>
 
-  <div class="p-6">
+  <div class="p-4">
     {{ $slot }}
   </div>
 
