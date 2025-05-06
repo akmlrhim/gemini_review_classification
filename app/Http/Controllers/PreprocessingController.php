@@ -50,6 +50,7 @@ class PreprocessingController extends Controller
 		$tf_idf = [];
 		$total_doc = count($data);
 
+		$hasil_tf_idf = [];
 
 		foreach ($data as $d) { // loop stiap data
 			$tokens = explode(' ', $d->tokenize); // token dengan spasi
@@ -88,11 +89,10 @@ class PreprocessingController extends Controller
 			}
 		}
 
-		echo "<pre>";
-		echo "<h1>$title</h1>";
-		print_r($tf_idf);
-		echo "</pre>";
-		exit;
+		return view('preprocessing.tf-idf', compact(
+			'title',
+			'tf_idf',
+		));
 	}
 
 	public function labeling()

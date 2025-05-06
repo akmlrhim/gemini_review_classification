@@ -49,6 +49,7 @@
 
               <x-nav-link-dropdown href="{{ route('preprocessing.index') }}">Preprosesing</x-nav-link-dropdown>
               <x-nav-link-dropdown href="{{ route('preprosesing.label') }}">Label</x-nav-link-dropdown>
+              <x-nav-link-dropdown href="{{ route('preprocessing.tfidf') }}">TF-IDF</x-nav-link-dropdown>
 
             </ul>
           </div>
