@@ -58,7 +58,7 @@
         </li>
 
         <x-nav-link href="{{ route('result.naive-bayes') }}">Naive Bayes Clsf.</x-nav-link>
-        <x-nav-link href="{{ route('result.confusion-matrix') }}">Conf. Matrix</x-nav-link>
+        <x-nav-link href="{{ route('result.confusion-matrix-form') }}">Conf. Matrix</x-nav-link>
 
         <li>
           <button id="user" data-dropdown-toggle="userDropdown"

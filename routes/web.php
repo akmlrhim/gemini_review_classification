@@ -31,6 +31,8 @@ Route::middleware('auth')->group(function () {
 
 	Route::prefix('result')->controller(ResultController::class)->group(function () {
 		Route::get('naive-bayes', 'calculateNaiveBayes')->name('result.naive-bayes');
+		Route::get('form-confusion-matrix', 'form')->name('result.confusion-matrix-form');
+		Route::post('confusion-matrix-process', 'process')->name('result.confusion-matrix-process');
 		Route::get('confusion-matrix', 'confusionMatrix')->name('result.confusion-matrix');
 	});
 });

@@ -64,24 +64,44 @@ class ResultController extends Controller
 		));
 	}
 
-	public function confusionMatrix()
+	public function form()
 	{
-		$title = "Confusion matrix";
+		$title = "Confusion Matrix";
+		return view('result.conf-matrix-form', compact('title'));
+	}
 
-		$testSize = 0.70;
-		$randomSeed = 42;
+	public function process(Request $request)
+	{
+		$request->validate([
+			'test_size' => 'required|numeric|min:1|max:100',
+			'random_seed' => 'required|numeric',
+		]);
 
-		// Ambil dan acak data
+		session([
+			'test_size' => $request->test_size,
+			'random_seed' => $request->random_seed,
+		]);
+
+		return redirect()->route('result.confusion-matrix');
+	}
+
+	public function confusionMatrix(Request $request)
+	{
+		$title = "Confusion Matrix";
+
+		$testSize = $request->session()->get('test_size') / 100;
+		$randomSeed = $request->session()->get('random_seed');
+
 		$data = DB::table('preprocessing')->select('id', 'lemmatized', 'label')->get()->toArray();
-		srand($randomSeed);
+		srand($randomSeed); //random seed 
 		shuffle($data); // acak data
 
-		// Split data
 		$total = count($data);
 		$testCount = (int) round($total * $testSize);
-		$testData = array_slice($data, 0, $testCount);    // 30% untuk data uji
-		$trainData = array_slice($data, $testCount);      // 70% untuk data latih
+		$testData = array_slice($data, 0, $testCount); // data uji
+		$trainData = array_slice($data, $testCount); // data latih
 
+		// inisialisasi array utk aktual dan prediksi
 		$labels_actual = [];
 		$labels_predicted = [];
 
@@ -126,14 +146,19 @@ class ResultController extends Controller
 				$total_words_in_class = array_sum($word_freq[$class] ?? []);
 				$vocab_size = count(array_unique(array_merge(...array_values($word_freq))));
 				foreach ($terms as $word => $count) {
+
+					//prob kata di kelas
 					$prob = $cond_prob[$class][$word] ?? (1 / ($total_words_in_class + $vocab_size));
 					$scores[$class] += $count * log($prob);
 				}
 			}
+
+			// ambil kelas skor tertinggi sebagai prediksi
 			$labels_predicted[$doc_id] = array_keys($scores, max($scores))[0];
 		}
 
-		$classes = ['positif', 'netral', 'negatif'];
+		// inisialisasi confusion matrix 
+		$classes = ['positif', 'negatif'];
 		$conf_matrix = [];
 		foreach ($classes as $actual) {
 			foreach ($classes as $predicted) {
@@ -141,30 +166,34 @@ class ResultController extends Controller
 			}
 		}
 
+		// hitung confusion matrix berdasarkan prediksi
 		foreach ($labels_actual as $id => $actual_label) {
 			$predicted_label = $labels_predicted[$id];
 			$conf_matrix[$actual_label][$predicted_label]++;
 		}
 
+		//hitung metriks
 		$metrics = [];
 		$total_test = count($testData);
 		foreach ($classes as $class) {
-			$TP = $conf_matrix[$class][$class];
-			$FP = array_sum(array_column($conf_matrix, $class)) - $TP;
-			$FN = array_sum($conf_matrix[$class]) - $TP;
-			$TN = $total_test - $TP - $FP - $FN;
+			$TP = $conf_matrix[$class][$class]; //true positif
+			$FP = array_sum(array_column($conf_matrix, $class)) - $TP; //false positif
+			$FN = array_sum($conf_matrix[$class]) - $TP; // false negatif
+			$TN = $total_test - $TP - $FP - $FN; // true negatif
 
-			$precision = $TP + $FP > 0 ? $TP / ($TP + $FP) : 0;
-			$recall    = $TP + $FN > 0 ? $TP / ($TP + $FN) : 0;
-			$f1        = $precision + $recall > 0 ? 2 * ($precision * $recall) / ($precision + $recall) : 0;
+			$precision = $TP + $FP > 0 ? $TP / ($TP + $FP) : 0; //presisi
+			$recall = $TP + $FN > 0 ? $TP / ($TP + $FN) : 0; //recall
+			$f1 = $precision + $recall > 0 ? 2 * ($precision * $recall) / ($precision + $recall) : 0; //f1 score
 
 			$metrics[$class] = [
-				'precision' => round($precision, 4),
-				'recall'    => round($recall, 4),
-				'f1_score'  => round($f1, 4),
+				'precision' => round($precision, 4) * 100,
+				'recall' => round($recall, 4) * 100,
+				'f1_score' => round($f1, 4) * 100,
 			];
 		}
 
+
+		// hitung akurasi 
 		$correct = 0;
 		foreach ($labels_actual as $id => $actual) {
 			if ($labels_predicted[$id] === $actual) $correct++;
@@ -176,7 +205,9 @@ class ResultController extends Controller
 			'classes',
 			'metrics',
 			'accuracy',
-			'title'
+			'title',
+			'testSize',
+			'randomSeed'
 		));
 	}
 }
