@@ -42,7 +42,7 @@ class PreprocessingController extends Controller
 	public function calculateTfIdf()
 	{
 		$title = 'TF-IDF';
-		$data = DB::table('preprocessing')->select('id', 'tokenize')->get();
+		$data = DB::table('preprocessing')->select('id', 'lemmatized')->get();
 
 		$tf = [];
 		$df = [];
@@ -53,7 +53,7 @@ class PreprocessingController extends Controller
 		$hasil_tf_idf = [];
 
 		foreach ($data as $d) { // loop stiap data
-			$tokens = explode(' ', $d->tokenize); // token dengan spasi
+			$tokens = explode(' ', $d->lemmatized); // token dengan spasi
 			$tf[$d->id] = array_count_values($tokens); //htung frekuensi kemunculan kata
 
 			foreach (array_unique($tokens) as $token) { //htung jlh dokumen yang mengandung stiap token (df)

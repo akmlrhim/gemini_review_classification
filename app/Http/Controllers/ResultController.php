@@ -1,0 +1,182 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class ResultController extends Controller
+{
+	public function calculateNaiveBayes()
+	{
+		$title = 'Naive Bayes';
+
+		$data = DB::table('preprocessing')
+			->select('id', 'lemmatized', 'label')
+			->get();
+
+		$features = []; //tf-idf
+		$labels = []; //label
+		$total_doc = count($data);
+
+		foreach ($data as $d) {
+			$tokens = explode(' ', $d->lemmatized);
+			$token_counts = array_count_values($tokens);
+			$features[$d->id] = $token_counts;
+			$labels[$d->id] = $d->label;
+		}
+
+		$class_prob = [];
+		$cond_prob = [];
+
+		foreach ($labels as $label) {
+			if (!isset($class_prob[$label])) {
+				$class_prob[$label] = 0;
+			}
+			$class_prob[$label]++;
+		}
+
+		foreach ($class_prob as $label => $count) {
+			$class_prob[$label] = $count / $total_doc;
+		}
+
+		foreach ($features as $doc_id => $terms) {
+			$label = $labels[$doc_id];
+			foreach ($terms as $word => $count) {
+				if (!isset($cond_prob[$label][$word])) {
+					$cond_prob[$label][$word] = 0;
+				}
+				$cond_prob[$label][$word] += $count;
+			}
+		}
+
+		foreach ($cond_prob as $label => $word_counts) {
+			$total_words = array_sum($word_counts);
+			foreach ($word_counts as $word => $count) {
+				$cond_prob[$label][$word] = ($count + 1) / ($total_words + count($features));
+			}
+		}
+
+		return view('result.naive-bayes', compact(
+			'title',
+			'class_prob',
+			'cond_prob',
+		));
+	}
+
+	public function confusionMatrix()
+	{
+		$title = "Confusion matrix";
+
+		$testSize = 0.70;
+		$randomSeed = 42;
+
+		// Ambil dan acak data
+		$data = DB::table('preprocessing')->select('id', 'lemmatized', 'label')->get()->toArray();
+		srand($randomSeed);
+		shuffle($data); // acak data
+
+		// Split data
+		$total = count($data);
+		$testCount = (int) round($total * $testSize);
+		$testData = array_slice($data, 0, $testCount);    // 30% untuk data uji
+		$trainData = array_slice($data, $testCount);      // 70% untuk data latih
+
+		$labels_actual = [];
+		$labels_predicted = [];
+
+		$tf = [];
+		foreach ($testData as $d) {
+			$tokens = explode(' ', $d->lemmatized);
+			$tf[$d->id] = array_count_values($tokens);
+			$labels_actual[$d->id] = $d->label;
+		}
+
+		$class_counts = [];
+		$word_freq = [];
+
+		foreach ($trainData as $d) {
+			$label = $d->label;
+			$class_counts[$label] = ($class_counts[$label] ?? 0) + 1;
+			$tokens = explode(' ', $d->lemmatized);
+			foreach ($tokens as $word) {
+				$word_freq[$label][$word] = ($word_freq[$label][$word] ?? 0) + 1;
+			}
+		}
+
+		$total_train_docs = count($trainData);
+		$class_prob = [];
+		foreach ($class_counts as $class => $count) {
+			$class_prob[$class] = $count / $total_train_docs;
+		}
+
+		$cond_prob = [];
+		foreach ($word_freq as $class => $freqs) {
+			$total_words = array_sum($freqs);
+			$vocab_size = count(array_unique(array_merge(...array_values($word_freq))));
+			foreach ($freqs as $word => $count) {
+				$cond_prob[$class][$word] = ($count + 1) / ($total_words + $vocab_size);
+			}
+		}
+
+		foreach ($tf as $doc_id => $terms) {
+			$scores = [];
+			foreach ($class_prob as $class => $prior) {
+				$scores[$class] = log($prior);
+				$total_words_in_class = array_sum($word_freq[$class] ?? []);
+				$vocab_size = count(array_unique(array_merge(...array_values($word_freq))));
+				foreach ($terms as $word => $count) {
+					$prob = $cond_prob[$class][$word] ?? (1 / ($total_words_in_class + $vocab_size));
+					$scores[$class] += $count * log($prob);
+				}
+			}
+			$labels_predicted[$doc_id] = array_keys($scores, max($scores))[0];
+		}
+
+		$classes = ['positif', 'netral', 'negatif'];
+		$conf_matrix = [];
+		foreach ($classes as $actual) {
+			foreach ($classes as $predicted) {
+				$conf_matrix[$actual][$predicted] = 0;
+			}
+		}
+
+		foreach ($labels_actual as $id => $actual_label) {
+			$predicted_label = $labels_predicted[$id];
+			$conf_matrix[$actual_label][$predicted_label]++;
+		}
+
+		$metrics = [];
+		$total_test = count($testData);
+		foreach ($classes as $class) {
+			$TP = $conf_matrix[$class][$class];
+			$FP = array_sum(array_column($conf_matrix, $class)) - $TP;
+			$FN = array_sum($conf_matrix[$class]) - $TP;
+			$TN = $total_test - $TP - $FP - $FN;
+
+			$precision = $TP + $FP > 0 ? $TP / ($TP + $FP) : 0;
+			$recall    = $TP + $FN > 0 ? $TP / ($TP + $FN) : 0;
+			$f1        = $precision + $recall > 0 ? 2 * ($precision * $recall) / ($precision + $recall) : 0;
+
+			$metrics[$class] = [
+				'precision' => round($precision, 4),
+				'recall'    => round($recall, 4),
+				'f1_score'  => round($f1, 4),
+			];
+		}
+
+		$correct = 0;
+		foreach ($labels_actual as $id => $actual) {
+			if ($labels_predicted[$id] === $actual) $correct++;
+		}
+		$accuracy = $total_test > 0 ? $correct / $total_test : 0;
+
+		return view('result.conf-matrix', compact(
+			'conf_matrix',
+			'classes',
+			'metrics',
+			'accuracy',
+			'title'
+		));
+	}
+}

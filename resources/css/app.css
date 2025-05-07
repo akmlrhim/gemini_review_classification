@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
 @import "tailwindcss";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -19,7 +20,7 @@
     --color-primary-900: #1e3a8a;
     --color-primary-950: #172554;
 
-    --font-sans: "Figtree", system-ui, Helvetica, Arial, sans-serif;
+    --font-sans: "Source Sans 3", system-ui, Helvetica, Arial, sans-serif;
     --color-ghost-white: #f8f8f8;
 }
 

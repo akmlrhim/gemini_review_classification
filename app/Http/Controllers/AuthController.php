@@ -30,7 +30,7 @@ class AuthController extends Controller
 
 		if (Auth::attempt($credentials)) {
 			$request->session()->regenerate();
-			return redirect()->intended('dataset');
+			return redirect()->intended('dashboard');
 		} else {
 			session()->flash('error', 'Email atau password salah');
 			return redirect()->back()->withInput($request->only('email'));

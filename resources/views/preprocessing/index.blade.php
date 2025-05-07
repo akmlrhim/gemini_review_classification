@@ -22,14 +22,15 @@
               Case folding
             </th>
             <th scope="col" class="px-6 py-2 uppercase">
+              Tokenize
+            </th>
+            <th scope="col" class="px-6 py-2 uppercase">
               Stopword
             </th>
             <th scope="col" class="px-6 py-2 uppercase">
               Lemmatized
             </th>
-            <th scope="col" class="px-6 py-2 uppercase">
-              Tokenize
-            </th>
+
             <th scope="col" class="px-6 py-2 uppercase">
               Label
             </th>
@@ -48,13 +49,13 @@
                 {{ $p->case_folding }}
               </th>
               <th class="px-6 py-1 font-medium text-black dark:text-white">
+                {{ $p->tokenize }}
+              </th>
+              <th class="px-6 py-1 font-medium text-black dark:text-white">
                 {{ $p->stopword }}
               </th>
               <th class="px-6 py-1 font-medium text-black dark:text-white">
                 {{ $p->lemmatized }}
-              </th>
-              <th class="px-6 py-1 font-medium text-black dark:text-white">
-                {{ $p->tokenize }}
               </th>
               <th class="px-6 py-1 font-medium text-black dark:text-white">
                 {{ $p->label }}
