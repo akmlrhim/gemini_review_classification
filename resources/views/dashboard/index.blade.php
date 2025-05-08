@@ -25,7 +25,7 @@
     <script type="module">
       const ctx = document.getElementById('labelChart').getContext('2d');
       const chart = new Chart(ctx, {
-        type: 'bar',
+        type: 'pie',
         data: {
           labels: {!! json_encode($label->pluck('label')) !!},
           datasets: [{
