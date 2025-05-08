@@ -4,10 +4,18 @@
   @if ($label->isEmpty())
     <x-empty-data></x-empty-data>
   @else
-    <div class="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-md border border-gray-200">
-      <h2 class="text-xl font-semibold text-gray-700 mb-4 text-center">Perbandingan jumlah label</h2>
-      <div class="relative overflow-x-auto rounded-md">
-        <canvas id="labelChart" class="w-full max-h-96"></canvas>
+    <div class="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 flex flex-col justify-center items-center">
+        <h2 class="text-xl font-semibold text-gray-700 mb-2 text-center">Jumlah Data</h2>
+        <p class="text-4xl font-bold text-blue-600">{{ $jumlahData }}</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+        <h2 class="text-xl font-semibold text-gray-700 mb-4 text-center">Perbandingan jumlah label</h2>
+        <div class="relative overflow-x-auto rounded-md">
+          <canvas id="labelChart" class="w-full max-h-96"></canvas>
+        </div>
       </div>
     </div>
   @endif

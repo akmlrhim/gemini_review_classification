@@ -64,13 +64,13 @@ class ResultController extends Controller
 		));
 	}
 
-	public function form()
+	public function formInput()
 	{
 		$title = "Confusion Matrix";
 		return view('result.conf-matrix-form', compact('title'));
 	}
 
-	public function process(Request $request)
+	public function processFormInput(Request $request)
 	{
 		$request->validate([
 			'test_size' => 'required|numeric|min:1|max:100',

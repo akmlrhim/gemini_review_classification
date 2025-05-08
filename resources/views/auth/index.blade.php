@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>{{ $title }}</title>
 
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.ico') }}">
+  <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg">
 
   @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -30,8 +30,7 @@
             class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Masukkan email" autocomplete="off">
           @error('email')
-            <small class="text-red-500 
-						">{{ $message }}</small>
+            <small class="text-red-500">{{ $message }}</small>
           @enderror
         </div>
         <div>
