@@ -42,7 +42,7 @@
 
       <div>
         <h2 class="text-xl font-semibold mb-4 text-gray-800">Metrik Per Kelas</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           @foreach ($metrics as $class => $m)
             <div class="bg-white rounded-lg p-4 border border-gray-900">
               <h3 class="text-lg font-bold mb-2 text-black">{{ ucfirst($class) }}</h3>
