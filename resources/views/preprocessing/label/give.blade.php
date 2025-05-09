@@ -7,8 +7,7 @@
       @csrf
 
       <div class="mb-4">
-        <label for="label" class="block text-md font-medium text-gray-700 mb-3">komentar :
-          {{ $label->case_folding }}</label>
+        <label for="label" class="block text-md font-medium text-gray-700 mb-3">"{{ $label->case_folding }}"</label>
         <select id="label" name="label"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
           <option value="" selected>pilih kelas atau label</option>
@@ -22,8 +21,8 @@
       </div>
       <div>
         <button type="button" onclick="window.location.href='{{ route('preprocessing.label') }}'"
-          class="bg-gray-500 text-white px-2 py-1 rounded-md">kembali</button>
-        <button type="submit" class="bg-blue-500 text-white px-2 py-1 rounded-md">simpan</button>
+          class="bg-gray-500 text-white px-2 py-1 text-sm rounded-md">kembali</button>
+        <button type="submit" class="bg-blue-500 text-white text-sm px-2 py-1 rounded-md">simpan</button>
       </div>
     </form>
   </div>

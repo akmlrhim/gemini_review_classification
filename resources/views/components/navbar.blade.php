@@ -2,7 +2,7 @@
   $show = DB::table('preprocessing')->whereNull('label')->doesntExist() && DB::table('preprocessing')->count() > 0;
 @endphp
 
-<nav class="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 text-md antialiased">
+<nav class="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 text-sm antialiased">
   <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
     <a href="{{ url()->current() }}" class="flex items-center space-x-3 rtl:space-x-reverse">
       <img src="https://flowbite.com/docs/images/logo.svg" class="h-8 mr-5" alt="Flowbite Logo" />

@@ -22,7 +22,7 @@
 
       <x-alert></x-alert>
 
-      <form class="space-y-4" action="{{ route('login.process') }}" method="POST">
+      <form class="space-y-4 text-sm" action="{{ route('login.process') }}" method="POST">
         @csrf
         <div>
           <label for="email" class="block mb-2 font-medium text-gray-900 dark:text-white">Your email</label>

@@ -1,7 +1,8 @@
 <x-layout>
   <x-slot:title>{{ $title }}</x-slot:title>
   <div class="flex items-center justify-center gap-3 max-w-xl mx-auto p-3">
-    <a href="{{ route('result.confusion-matrix-form') }}" class="bg-gray-700 text-white px-2 py-2 rounded-lg">Kembali</a>
+    <a href="{{ route('result.confusion-matrix-form') }}"
+      class="bg-gray-700 text-sm text-white px-2 py-2 rounded-lg">Kembali</a>
   </div>
 
   @if (empty($conf_matrix))
