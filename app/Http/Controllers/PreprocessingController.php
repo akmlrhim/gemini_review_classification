@@ -23,7 +23,7 @@ class PreprocessingController extends Controller
 		$title = 'Search';
 		$search = $request->search;
 		$prepro = DB::table('preprocessing')
-			->where('content', 'like', '%' . $search . '%')
+			->where('case_folding', 'like', '%' . $search . '%')
 			->paginate(10)
 			->appends(['search' => $search]);
 
@@ -99,7 +99,7 @@ class PreprocessingController extends Controller
 	{
 		$title = "Labeling";
 		$isLabel = DB::table('preprocessing')
-			->select('id', 'content', 'label')->paginate(20);
+			->select('id', 'case_folding', 'label')->paginate(20);
 
 		$hasLabelled = DB::table('preprocessing')
 			->whereNotNull('label')
@@ -111,9 +111,7 @@ class PreprocessingController extends Controller
 	public function giveLabel($id)
 	{
 		$title = "Beri label";
-		$label = DB::table('preprocessing')
-			->where('id', $id)
-			->firstOrFail();
+		$label = DB::table('preprocessing')->find($id);
 
 		return view('preprocessing.label.give', compact('label', 'title'));
 	}
@@ -138,9 +136,7 @@ class PreprocessingController extends Controller
 	public function editLabel($id)
 	{
 		$title = "Edit Label";
-		$label = DB::table('preprocessing')
-			->where('id', $id)
-			->firstOrFail();
+		$label = DB::table('preprocessing')->find($id);
 
 		return view('preprocessing.label.edit', compact('label', 'title'));
 	}

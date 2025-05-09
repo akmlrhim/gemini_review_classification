@@ -1,5 +1,5 @@
 @php
-  $show = DB::table('preprocessing')->whereNull('label')->doesntExist();
+  $show = DB::table('preprocessing')->whereNull('label')->doesntExist() && DB::table('preprocessing')->count() > 0;
 @endphp
 
 <nav class="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 text-md antialiased">

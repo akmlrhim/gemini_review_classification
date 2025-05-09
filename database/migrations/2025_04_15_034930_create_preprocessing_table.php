@@ -13,8 +13,6 @@ return new class extends Migration
 	{
 		Schema::create('preprocessing', function (Blueprint $table) {
 			$table->id();
-			$table->text('content')->nullable();
-			$table->text('cleaned')->nullable();
 			$table->text('case_folding')->nullable();
 			$table->text('stopword')->nullable();
 			$table->text('lemmatized')->nullable();

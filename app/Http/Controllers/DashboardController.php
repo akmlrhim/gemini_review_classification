@@ -10,8 +10,10 @@ class DashboardController extends Controller
 	public function index()
 	{
 		$title = 'Dashboard';
-		$jumlahData = DB::table('preprocessing')
-			->select('id', 'content')
+		$jumlahDataset = DB::table('datasets')->count();
+
+		$cleanedData = DB::table('preprocessing')
+			->select('id', 'cleaned')
 			->count();
 
 		$label = DB::table('preprocessing')
@@ -22,7 +24,8 @@ class DashboardController extends Controller
 
 		return view('dashboard.index', compact(
 			'title',
-			'jumlahData',
+			'jumlahDataset',
+			'cleanedData',
 			'label',
 		));
 	}
