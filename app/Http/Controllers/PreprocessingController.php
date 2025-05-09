@@ -101,17 +101,21 @@ class PreprocessingController extends Controller
 		$isLabel = DB::table('preprocessing')
 			->select('id', 'content', 'label')->paginate(20);
 
-		return view('preprocessing.label.index', compact('title', 'isLabel'));
+		$hasLabelled = DB::table('preprocessing')
+			->whereNotNull('label')
+			->get();
+
+		return view('preprocessing.label.index', compact('title', 'isLabel', 'hasLabelled'));
 	}
 
-	public function editLabel($id)
+	public function giveLabel($id)
 	{
 		$title = "Beri label";
 		$label = DB::table('preprocessing')
 			->where('id', $id)
 			->firstOrFail();
 
-		return view('preprocessing.label.edit', compact('label', 'title'));
+		return view('preprocessing.label.give', compact('label', 'title'));
 	}
 
 	public function updateLabel(Request $request, int $id)
@@ -129,5 +133,15 @@ class PreprocessingController extends Controller
 	{
 		DB::table('preprocessing')->update(['label' => NULL]);
 		return redirect()->back()->with('success', 'Label berhasil dihapus');
+	}
+
+	public function editLabel($id)
+	{
+		$title = "Edit Label";
+		$label = DB::table('preprocessing')
+			->where('id', $id)
+			->firstOrFail();
+
+		return view('preprocessing.label.edit', compact('label', 'title'));
 	}
 }

@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
 		Route::get('search', 'search')->name('preprocessing.search');
 		Route::delete('delete-all', 'deleteAll')->name('preprocessing.delete.all');
 		Route::get('tf-idf', 'calculateTfIdf')->name('preprocessing.tfidf')->middleware('labelled');
+		Route::get('label/give/{id}', 'giveLabel')->name('preprocessing.label.give');
 		Route::get('label/edit/{id}', 'editLabel')->name('preprocessing.label.edit');
 		Route::put('label/update/{id}', 'updateLabel')->name('preprocessing.label.update');
 		Route::put('nullable-label', 'nullableLabel')->name('preprocessing.nullable-label');

@@ -10,10 +10,10 @@
         <label for="test_size" class="block text-md font-medium text-gray-700">komentar : {{ $label->content }}</label>
         <select id="label" name="label"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option value="" disabled {{ $label->label == '' ? 'selected' : '' }}>pilih kelas atau label</option>
-          <option value="positif" {{ $label->label == 'positif' ? 'selected' : '' }}>positif</option>
-          <option value="netral" {{ $label->label == 'netral' ? 'selected' : '' }}>netral</option>
-          <option value="negatif" {{ $label->label == 'negatif' ? 'selected' : '' }}>negatif</option>
+          <option value="" selected>pilih kelas atau label</option>
+          <option value="positif">positif</option>
+          <option value="netral">netral</option>
+          <option value="negatif">negatif</option>
         </select>
         @error('label')
           <small class="text-red-500">{{ $message }}</small>

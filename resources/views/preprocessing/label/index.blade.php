@@ -19,8 +19,11 @@
                 onsubmit="return confirm('are you sure?');" class="inline">
                 @csrf
                 @method('PUT')
-                <button type="submit" class="bg-blue-600 px-2 py-1 rounded">NULL</button>
+                <button type="submit" class="bg-blue-600 text-sm px-1 py-0.5 rounded">null</button>
               </form>
+            </th>
+            <th scope="col" class="px-6 py-2 uppercase">
+              aksi
             </th>
           </tr>
         </thead>
@@ -32,13 +35,19 @@
               </th>
               <th class="px-6 py-1 font-medium text-black dark:text-white">
                 @if ($rows->label)
-                  {{ $rows->label }} | <a href="{{ route('preprocessing.label.edit', $rows->id) }}"
-                    class="font-medium text-yellow-800 dark:text-yellow-500 hover:underline">edit label</a>
+                  {{ $rows->label }}
                 @else
-                  <a href="{{ route('preprocessing.label.edit', $rows->id) }}"
+                  <a href="{{ route('preprocessing.label.give', $rows->id) }}"
                     class="font-medium text-blue-600 dark:text-blue-500 hover:underline">beri label</a>
                 @endif
-
+              </th>
+              <th class="px-6 py-1 font-medium text-black dark:text-white">
+                @if ($rows->label)
+                  <a href="{{ route('preprocessing.label.edit', $rows->id) }}"
+                    class="font-medium text-yellow-600 dark:text-blue-500 hover:underline">edit label</a>
+                @else
+                  <span class="font-medium text-red-600 dark:text-red-500 italic">belum berlabel</span>
+                @endif
               </th>
             </tr>
           @endforeach
