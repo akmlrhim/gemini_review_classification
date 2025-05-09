@@ -8,7 +8,7 @@
       <div class="mb-4">
         <label for="test_size" class="block text-md font-medium text-gray-700">Test Size (%)</label>
         <input type="number" id="test_size" name="test_size" value="{{ old('test_size') }}"
-          class="mt-1 p-2 w-full border rounded-md" min="0" max="100">
+          class="text-sm mt-1 p-2 w-full border rounded-md" min="0" max="100">
         @error('test_size')
           <small class="text-red-500">{{ $message }}</small>
         @enderror
@@ -17,7 +17,7 @@
       <div class="mb-4">
         <label for="random_seed" class="block text-md font-medium text-gray-700">Random Seed</label>
         <input type="number" id="random_seed" name="random_seed" value="{{ old('random_seed') }}"
-          class="mt-1 p-2 w-full border rounded-md">
+          class="text-sm mt-1 p-2 w-full border rounded-md">
         @error('random_seed')
           <small class="text-red-500">{{ $message }}</small>
         @enderror
