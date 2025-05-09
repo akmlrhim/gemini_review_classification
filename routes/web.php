@@ -23,13 +23,16 @@ Route::middleware('auth')->group(function () {
 
 	Route::prefix('preprocessing')->controller(PreprocessingController::class)->group(function () {
 		Route::get('/', 'index')->name('preprocessing.index');
-		Route::get('label', 'labeling')->name('preprosesing.label');
+		Route::get('label', 'labeling')->name('preprocessing.label');
 		Route::get('search', 'search')->name('preprocessing.search');
 		Route::delete('delete-all', 'deleteAll')->name('preprocessing.delete.all');
-		Route::get('tf-idf', 'calculateTfIdf')->name('preprocessing.tfidf');
+		Route::get('tf-idf', 'calculateTfIdf')->name('preprocessing.tfidf')->middleware('labelled');
+		Route::get('label/edit/{id}', 'editLabel')->name('preprocessing.label.edit');
+		Route::put('label/update/{id}', 'updateLabel')->name('preprocessing.label.update');
+		Route::put('nullable-label', 'nullableLabel')->name('preprocessing.nullable-label');
 	});
 
-	Route::prefix('result')->controller(ResultController::class)->group(function () {
+	Route::prefix('result')->middleware('labelled')->controller(ResultController::class)->group(function () {
 		Route::get('naive-bayes', 'calculateNaiveBayes')->name('result.naive-bayes');
 		Route::get('form-confusion-matrix', 'formInput')->name('result.confusion-matrix-form');
 		Route::post('confusion-matrix-process', 'processFormInput')->name('result.confusion-matrix-process');

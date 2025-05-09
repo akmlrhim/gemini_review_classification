@@ -1,0 +1,55 @@
+<x-layout>
+  <x-slot:title>{{ $title }}</x-slot:title>
+
+  <x-alert></x-alert>
+
+  @if ($isLabel->isEmpty())
+    <x-empty-data></x-empty-data>
+  @else
+    <div class="relative overflow-x-auto rounded-md">
+      <table class="w-full text-left rtl:text-right text-black dark:text-gray-400">
+        <thead class="text-md text-white bg-gray-900 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="px-6 py-2 uppercase">
+              Content
+            </th>
+            <th scope="col" class="px-6 py-2 uppercase">
+              Label |
+              <form action="{{ route('preprocessing.nullable-label') }}" method="POST"
+                onsubmit="return confirm('are you sure?');" class="inline">
+                @csrf
+                @method('PUT')
+                <button type="submit" class="bg-blue-600 px-2 py-1 rounded">NULL</button>
+              </form>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach ($isLabel as $rows)
+            <tr class="text-md bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+              <th scope="row" class="px-6 py-1 font-medium text-black dark:text-white">
+                {{ $rows->content }}
+              </th>
+              <th class="px-6 py-1 font-medium text-black dark:text-white">
+                @if ($rows->label)
+                  {{ $rows->label }} | <a href="{{ route('preprocessing.label.edit', $rows->id) }}"
+                    class="font-medium text-yellow-800 dark:text-yellow-500 hover:underline">edit label</a>
+                @else
+                  <a href="{{ route('preprocessing.label.edit', $rows->id) }}"
+                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline">beri label</a>
+                @endif
+
+              </th>
+            </tr>
+          @endforeach
+        </tbody>
+      </table>
+    </div>
+  @endif
+
+  <div class="mt-3">
+    {{ $isLabel->links() }}
+  </div>
+
+
+</x-layout>

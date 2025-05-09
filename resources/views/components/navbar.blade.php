@@ -1,3 +1,7 @@
+@php
+  $show = DB::table('preprocessing')->whereNull('label')->doesntExist();
+@endphp
+
 <nav class="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 text-md antialiased">
   <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
     <a href="{{ url()->current() }}" class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -50,15 +54,17 @@
             <ul class="py-2 text-gray-700 dark:text-gray-400" aria-labelledby="dropdownLargeButton">
 
               <x-nav-link-dropdown href="{{ route('preprocessing.index') }}">Preprosesing</x-nav-link-dropdown>
-              <x-nav-link-dropdown href="{{ route('preprosesing.label') }}">Label</x-nav-link-dropdown>
-              <x-nav-link-dropdown href="{{ route('preprocessing.tfidf') }}">TF-IDF</x-nav-link-dropdown>
+              <x-nav-link-dropdown href="{{ route('preprocessing.label') }}">Label</x-nav-link-dropdown>
 
             </ul>
           </div>
         </li>
 
-        <x-nav-link href="{{ route('result.naive-bayes') }}">Naive Bayes Clsf.</x-nav-link>
-        <x-nav-link href="{{ route('result.confusion-matrix-form') }}">Conf. Matrix</x-nav-link>
+        @if ($show)
+          <x-nav-link href="{{ route('preprocessing.tfidf') }}">TF-IDF</x-nav-link>
+          <x-nav-link href="{{ route('result.naive-bayes') }}">Naive Bayes Clsf.</x-nav-link>
+          <x-nav-link href="{{ route('result.confusion-matrix-form') }}">Conf. Matrix</x-nav-link>
+        @endif
 
         <li>
           <button id="user" data-dropdown-toggle="userDropdown"

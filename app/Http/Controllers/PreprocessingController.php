@@ -100,6 +100,34 @@ class PreprocessingController extends Controller
 		$title = "Labeling";
 		$isLabel = DB::table('preprocessing')
 			->select('id', 'content', 'label')->paginate(20);
-		return view('preprocessing.label', compact('title', 'isLabel'));
+
+		return view('preprocessing.label.index', compact('title', 'isLabel'));
+	}
+
+	public function editLabel($id)
+	{
+		$title = "Beri label";
+		$label = DB::table('preprocessing')
+			->where('id', $id)
+			->firstOrFail();
+
+		return view('preprocessing.label.edit', compact('label', 'title'));
+	}
+
+	public function updateLabel(Request $request, int $id)
+	{
+		$request->validate(['label' => 'required']);
+
+		DB::table('preprocessing')
+			->where('id', $id)
+			->update(['label' => $request->label]);
+
+		return redirect()->route('preprocessing.label')->with('success', 'Label berhasil diupdate');
+	}
+
+	public function nullableLabel()
+	{
+		DB::table('preprocessing')->update(['label' => NULL]);
+		return redirect()->back()->with('success', 'Label berhasil dihapus');
 	}
 }

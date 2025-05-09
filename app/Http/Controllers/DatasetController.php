@@ -19,7 +19,9 @@ class DatasetController extends Controller
 	public function contents()
 	{
 		$title = "Only column content on datasets";
-		$contents = DB::table('datasets')->select('id', 'content')->paginate(20);
+		$contents = DB::table('datasets')
+			->select('id', 'content')
+			->paginate(20);
 
 		return view('dataset.contents', compact('title', 'contents'));
 	}
