@@ -18,7 +18,7 @@
         <tbody>
           @foreach ($contents as $row)
             <tr class="bg-white border border-gray-200">
-              <td class="px-6 py-1 text-sm text-gray-900 dark:text-gray-100">
+              <td class="px-6 py-1 text-xs text-gray-900 dark:text-gray-100">
                 {{ $row->content }}
               </td>
             </tr>

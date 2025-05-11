@@ -158,7 +158,7 @@ class ResultController extends Controller
 		}
 
 		// inisialisasi confusion matrix 
-		$classes = ['positif', 'netral', 'negatif'];
+		$classes = ['positif', 'negatif'];
 		$conf_matrix = [];
 		foreach ($classes as $actual) {
 			foreach ($classes as $predicted) {
