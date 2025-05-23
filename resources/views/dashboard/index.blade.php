@@ -19,7 +19,7 @@
       <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 md:col-span-2">
         <h2 class="text-md font-medium text-gray-700 mb-4 text-center">Perbandingan jumlah label</h2>
         <div class="relative overflow-x-auto rounded-md">
-          <canvas id="labelChart" class="w-full h-[120px]"></canvas>
+          <canvas id="labelChart" class="w-[300px] h-[300px] mx-auto"></canvas>
         </div>
       </div>
 
@@ -31,7 +31,7 @@
     <script type="module">
       const ctx = document.getElementById('labelChart').getContext('2d');
       const chart = new Chart(ctx, {
-        type: 'bar',
+        type: 'pie',
         data: {
           labels: {!! json_encode($label->pluck('label')) !!},
           datasets: [{

@@ -11,7 +11,7 @@ Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::post('login', [AuthController::class, 'login'])->name('login.process');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
 	Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
 	Route::prefix('dataset')->controller(DatasetController::class)->group(function () {

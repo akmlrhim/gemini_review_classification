@@ -10,7 +10,7 @@ class PreprocessingController extends Controller
 	public function index()
 	{
 		$title = 'Preprocessing';
-		$prepro = DB::table('preprocessing')->paginate(10);
+		$prepro = DB::table('preprocessing')->paginate(30);
 
 		return view('preprocessing.index', compact(
 			'title',
@@ -133,7 +133,7 @@ class PreprocessingController extends Controller
 		return redirect()->back()->with('success', 'Label berhasil dihapus');
 	}
 
-	public function editLabel($id)
+	public function editLabel(int $id)
 	{
 		$title = "Edit Label";
 		$label = DB::table('preprocessing')->find($id);

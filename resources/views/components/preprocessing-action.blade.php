@@ -20,14 +20,14 @@
       @csrf
       @method('DELETE')
       <button type="submit"
-        class="px-4 py-2 text-sm font-medium text-red-500 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100">
-        Delete All
+        class="px-4 py-2 text-sm font-medium text-red-500 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 uppercase">
+        delete all
       </button>
     </form>
 
     <button type="button" onclick="window.location.href='{{ route('preprocessing.index') }}'"
-      class="px-4 py-2 text-sm font-medium text-blue-700 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100">
-      Back
+      class="px-4 py-2 text-sm font-medium text-blue-700 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 uppercase">
+      back
     </button>
   </div>
-</div>
+</div>	

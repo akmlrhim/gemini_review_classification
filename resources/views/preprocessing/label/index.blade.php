@@ -29,24 +29,24 @@
         </thead>
         <tbody>
           @foreach ($isLabel as $rows)
-            <tr class="text-sm bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-              <th scope="row" class="px-6 py-1 font-medium text-black dark:text-white">
+            <tr class="text-xs bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+              <th scope="row" class="px-6 py-1 font-normal text-black dark:text-white">
                 {{ $rows->case_folding }}
               </th>
-              <th class="px-6 py-1 font-medium text-black dark:text-white">
+              <th class="px-6 py-1 font-normal text-black dark:text-white">
                 @if ($rows->label)
                   {{ $rows->label }}
                 @else
                   <a href="{{ route('preprocessing.label.give', $rows->id) }}"
-                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline">beri label</a>
+                    class="font-normal text-blue-600 dark:text-blue-500 hover:underline">beri label</a>
                 @endif
               </th>
-              <th class="px-6 py-1 font-medium text-black dark:text-white">
+              <th class="px-6 py-1 font-normal text-black dark:text-white">
                 @if ($rows->label)
                   <a href="{{ route('preprocessing.label.edit', $rows->id) }}"
-                    class="font-medium text-yellow-600 dark:text-blue-500 hover:underline">edit label</a>
+                    class="font-normal text-yellow-600 dark:text-blue-500 hover:underline">edit label</a>
                 @else
-                  <span class="font-medium text-red-600 dark:text-red-500 italic">belum berlabel</span>
+                  <span class="font-normal text-red-600 dark:text-red-500 italic">belum berlabel</span>
                 @endif
               </th>
             </tr>

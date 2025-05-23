@@ -92,7 +92,10 @@ class ResultController extends Controller
 		$testSize = $request->session()->get('test_size') / 100;
 		$randomSeed = $request->session()->get('random_seed');
 
-		$data = DB::table('preprocessing')->select('id', 'lemmatized', 'label')->get()->toArray();
+		$data = DB::table('preprocessing')->select('id', 'lemmatized', 'label')
+			->get()
+			->toArray();
+
 		srand($randomSeed); //random seed 
 		shuffle($data); // acak data
 
@@ -192,11 +195,13 @@ class ResultController extends Controller
 			];
 		}
 
-
 		// hitung akurasi 
 		$correct = 0;
 		foreach ($labels_actual as $id => $actual) {
-			if ($labels_predicted[$id] === $actual) $correct++;
+			// if ($labels_predicted[$id] === $actual) $correct++;
+			if ($labels_predicted[$id] === $actual) {
+				$correct++;
+			}
 		}
 		$accuracy = $total_test > 0 ? $correct / $total_test : 0;
 
