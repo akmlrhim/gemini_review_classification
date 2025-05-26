@@ -52,7 +52,7 @@
         </thead>
         <tbody>
           @foreach ($dataset as $row)
-            <tr class="text-xs bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+            <tr class="text-sm bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
               <th scope="row" class="px-6 py-1 font-medium text-black whitespace-nowrap dark:text-white">
                 {{ $dataset->firstItem() + $loop->index }}
               </th>

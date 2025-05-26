@@ -29,7 +29,7 @@
         </thead>
         <tbody>
           @foreach ($isLabel as $rows)
-            <tr class="text-xs bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+            <tr class="text-sm bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
               <th scope="row" class="px-6 py-1 font-normal text-black dark:text-white">
                 {{ $rows->case_folding }}
               </th>

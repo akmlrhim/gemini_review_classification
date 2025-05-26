@@ -13,11 +13,13 @@ return new class extends Migration
 	{
 		Schema::create('preprocessing', function (Blueprint $table) {
 			$table->id();
+			$table->unsignedBigInteger('user_id')->nullable();
 			$table->text('case_folding')->nullable();
 			$table->text('stopword')->nullable();
 			$table->text('lemmatized')->nullable();
 			$table->text('tokenize')->nullable();
-			$table->string('label', 32)->nullable();
+			$table->string('label', 16)->nullable();
+			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 			$table->timestamps();
 		});
 	}

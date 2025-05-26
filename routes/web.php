@@ -6,13 +6,18 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DatasetController;
 use App\Http\Controllers\PreprocessingController;
 use App\Http\Controllers\ResultController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::post('login', [AuthController::class, 'login'])->name('login.process');
+Route::get('register', [AuthController::class, 'register'])->name('register');
+Route::post('register', [AuthController::class, 'saveRegister'])->name('register.process')->middleware('guest');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth'])->group(function () {
 	Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
+	Route::resource('manage-user', UserController::class)->middleware('admin');
 
 	Route::prefix('dataset')->controller(DatasetController::class)->group(function () {
 		Route::get('/', 'index')->name('dataset.index');

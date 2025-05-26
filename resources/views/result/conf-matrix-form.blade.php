@@ -15,16 +15,6 @@
         @enderror
       </div>
 
-      <div class="mb-4">
-        <label for="random_seed" class="block text-sm font-medium text-gray-700">Random Seed</label>
-        <input type="number" id="random_seed" name="random_seed" value="{{ old('random_seed') }}"
-          class="text-sm mt-1 p-2 w-full border rounded-md" placeholder="masukkan random seed (default:42)" />
-        @error('random_seed')
-          <small class="text-red-500">{{ $message }}</small>
-        @enderror
-
-      </div>
-
       <button type="submit" class="bg-blue-500 text-sm text-white p-2 rounded-md">hitung</button>
     </form>
   </div>

@@ -73,14 +73,10 @@ class ResultController extends Controller
 	public function processFormInput(Request $request)
 	{
 		$request->validate([
-			'test_size' => 'required|numeric|min:1|max:100',
-			'random_seed' => 'required|numeric',
+			'test_size' => 'required|numeric|min:1|max:100'
 		]);
 
-		session([
-			'test_size' => $request->test_size,
-			'random_seed' => $request->random_seed,
-		]);
+		session(['test_size' => $request->test_size]);
 
 		return redirect()->route('result.confusion-matrix');
 	}
@@ -90,7 +86,7 @@ class ResultController extends Controller
 		$title = "Confusion Matrix";
 
 		$testSize = $request->session()->get('test_size') / 100;
-		$randomSeed = $request->session()->get('random_seed');
+		$randomSeed = 42;
 
 		$data = DB::table('preprocessing')->select('id', 'lemmatized', 'label')
 			->get()
@@ -127,6 +123,7 @@ class ResultController extends Controller
 			}
 		}
 
+		// prior probability
 		$total_train_docs = count($trainData);
 		$class_prob = [];
 		foreach ($class_counts as $class => $count) {

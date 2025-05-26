@@ -80,8 +80,15 @@
             class="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
             <ul class="py-2 text-gray-700 dark:text-gray-400" aria-labelledby="dropdownLargeButton">
 
+              @if (Auth::user()->role == 'admin')
+                <x-nav-link-dropdown href="{{ route('manage-user.index') }}">Manage Users</x-nav-link-dropdown>
+              @endif
+
+              <x-nav-link-dropdown href="#">My Profile</x-nav-link-dropdown>
+
               <x-nav-link-dropdown href="#"
                 onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">Logout</x-nav-link-dropdown>
+
             </ul>
           </div>
         </li>

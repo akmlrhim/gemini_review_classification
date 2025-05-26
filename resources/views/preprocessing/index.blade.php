@@ -32,19 +32,19 @@
         <tbody>
           @foreach ($prepro as $row)
             <tr class="bg-white border border-gray-200">
-              <td class="px-6 py-1 text-xs text-gray-900 dark:text-gray-100">
+              <td class="px-6 py-1 text-sm text-gray-900 dark:text-gray-100">
                 {{ $row->case_folding }}
               </td>
-              <td class="px-6 py-1 text-xs text-gray-900 dark:text-gray-100">
+              <td class="px-6 py-1 text-sm text-gray-900 dark:text-gray-100">
                 {{ $row->tokenize }}
               </td>
-              <td class="px-6 py-1 text-xs text-gray-900 dark:text-gray-100">
+              <td class="px-6 py-1 text-sm text-gray-900 dark:text-gray-100">
                 {{ $row->stopword }}
               </td>
-              <td class="px-6 py-1 text-xs text-gray-900 dark:text-gray-100">
+              <td class="px-6 py-1 text-sm text-gray-900 dark:text-gray-100">
                 {{ $row->lemmatized }}
               </td>
-              <td class="px-6 py-1 text-xs text-gray-900 dark:text-gray-100">
+              <td class="px-6 py-1 text-sm text-gray-900 dark:text-gray-100">
                 {{ $row->label }}
               </td>
             </tr>
