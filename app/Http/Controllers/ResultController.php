@@ -158,7 +158,7 @@ class ResultController extends Controller
 		}
 
 		// inisialisasi confusion matrix 
-		$classes = ['positif', 'negatif'];
+		$classes = array_values(array_unique(array_map(function($d) { return $d->label; }, $data)));
 		$conf_matrix = [];
 		foreach ($classes as $actual) {
 			foreach ($classes as $predicted) {

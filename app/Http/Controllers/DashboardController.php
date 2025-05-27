@@ -29,4 +29,12 @@ class DashboardController extends Controller
 			'label',
 		));
 	}
+
+	public function reset()
+	{
+		DB::table('datasets')->truncate();
+		DB::table('preprocessing')->truncate();
+
+		return redirect()->route('dashboard.index')->with('success', 'Berhasil!');
+	}
 }

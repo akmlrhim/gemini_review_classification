@@ -31,7 +31,7 @@
         </thead>
         <tbody>
           @foreach ($prepro as $row)
-            <tr class="bg-white border border-gray-200">
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 text-sm">
               <td class="px-6 py-1 text-sm text-gray-900 dark:text-gray-100">
                 {{ $row->case_folding }}
               </td>

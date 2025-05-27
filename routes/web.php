@@ -16,6 +16,7 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout')->middle
 
 Route::middleware(['auth'])->group(function () {
 	Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+	Route::delete('dashboard/reset', [DashboardController::class, 'reset'])->name('dashboard.reset');
 
 	Route::resource('manage-user', UserController::class)->middleware('admin');
 

@@ -1,6 +1,8 @@
 <x-layout>
   <x-slot:title>{{ $title }}</x-slot:title>
 
+  <x-alert></x-alert>
+
   @if ($label->isEmpty())
     <x-empty-data></x-empty-data>
   @else
@@ -9,6 +11,15 @@
       <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 flex flex-col justify-center items-center">
         <h2 class="text-md font-medium text-gray-700 mb-2 text-center">Jumlah Data</h2>
         <p class="text-xl font-bold text-blue-600">{{ $jumlahDataset }}</p>
+
+        <form action="{{ route('dashboard.reset') }}" method="POST" class="mt-2"
+          onsubmit="return confirm('Apakah anda yakin?');">
+          @csrf
+          @method('DELETE')
+          <button type="submit" class="px-2 py-1 bg-red-500 text-sm text-white rounded hover:bg-red-600 transition">
+            Reset Data
+          </button>
+        </form>
       </div>
 
       <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 flex flex-col justify-center items-center">

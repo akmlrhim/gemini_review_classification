@@ -1,6 +1,5 @@
 <div class="flex items-center justify-center gap-3 max-w-xl mx-auto p-3">
   <form class="flex-grow" action="{{ route('dataset.search') }}" method="GET">
-    @csrf
     <label for="simple-search" class="sr-only">Search</label>
     <div class="relative">
       <input type="text" id="search" autocomplete="off"

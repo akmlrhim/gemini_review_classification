@@ -31,7 +31,7 @@ class UserController extends Controller
 		$request->validate([
 			'name' => 'required|string|max:255',
 			'email' => 'required|email|unique:users,email',
-			'password' => 'required|string|min:8|confirmed',
+			'password' => 'required|string|min:8',
 			'role' => 'required|in:admin,user'
 		]);
 
@@ -57,19 +57,14 @@ class UserController extends Controller
 	public function update(Request $request, $id)
 	{
 		$request->validate([
-			'name' => 'required|string|max:255',
-			'email' => 'required|email|unique:users,email,' . $id,
-			'role' => 'required|in:admin,user'
+			'status' => 'required|in:active,inactive',
 		]);
 
 		DB::table('users')->where('id', $id)->update([
-			'name' => $request->name,
-			'email' => $request->email,
 			'status' => $request->status,
-			'role' => $request->role,
 		]);
 
-		return redirect()->route('manage-user.index')->with('success', 'User berhasil diperbarui!');
+		return redirect()->route('manage-user.index')->with('success', 'Perubahan berhasil disimpan!');
 	}
 
 	public function destroy($id)
