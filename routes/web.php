@@ -12,7 +12,7 @@ use App\Http\Controllers\PreprocessingController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
-	return !Auth::check() ? redirect()->route('dashboard.index') : redirect()->route('login');
+	return redirect()->route('dashboard.index');
 });
 
 Route::get('login', [AuthController::class, 'index'])->name('login');
