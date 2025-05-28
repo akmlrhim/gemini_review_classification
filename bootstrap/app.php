@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AllLabelled;
 use App\Http\Middleware\AuthCheck;
+use App\Http\Middleware\HasData;
 use App\Http\Middleware\IsAdmin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -16,8 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
 	->withMiddleware(function (Middleware $middleware) {
 		$middleware->alias([
 			'auth' => AuthCheck::class,
-			'labelled' => AllLabelled::class,
-			'admin' => IsAdmin::class
+			'admin' => IsAdmin::class,
+			'hasData' => HasData::class
 		]);
 	})
 	->withExceptions(function (Exceptions $exceptions) {

@@ -4,13 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class PreprocessingController extends Controller
 {
 	public function index()
 	{
 		$title = 'Preprocessing';
-		$prepro = DB::table('preprocessing')->paginate(30);
+		$prepro = DB::table('preprocessing')
+			->select('id', 'case_folding', 'tokenize', 'stopword', 'lemmatized', 'label')
+			->where('created_by', Auth::user()->id)
+			->paginate(30);
 
 		return view('preprocessing.index', compact(
 			'title',
@@ -24,6 +28,7 @@ class PreprocessingController extends Controller
 		$search = $request->search;
 		$prepro = DB::table('preprocessing')
 			->where('case_folding', 'like', '%' . $search . '%')
+			->where('created_by', Auth::user()->id)
 			->paginate(10)
 			->appends(['search' => $search]);
 
@@ -35,77 +40,30 @@ class PreprocessingController extends Controller
 
 	public function deleteAll()
 	{
-		DB::table('preprocessing')->truncate();
+		DB::table('preprocessing')
+			->where('created_by', Auth::user()->id)
+			->delete();
+
 		return redirect()->route('preprocessing.index')->with('success', 'Data berhasil dihapus');
-	}
-
-	public function calculateTfIdf()
-	{
-		$title = 'TF-IDF';
-		$data = DB::table('preprocessing')->select('id', 'lemmatized')->get();
-
-		$tf = [];
-		$df = [];
-		$idf = [];
-		$tf_idf = [];
-		$total_doc = count($data);
-
-		$hasil_tf_idf = [];
-
-		foreach ($data as $d) { // loop stiap data
-			$tokens = explode(' ', $d->lemmatized); // token dengan spasi
-			$tf[$d->id] = array_count_values($tokens); //htung frekuensi kemunculan kata
-
-			foreach (array_unique($tokens) as $token) { //htung jlh dokumen yang mengandung stiap token (df)
-				//jika token belum ada di df, inisialisasi dengan 0
-				if (!isset($df[$token])) {
-					$df[$token] = 0;
-				}
-				//
-
-				//+1 jika token ada di df
-				$df[$token]++;
-			}
-		}
-
-		//loop setiap kata beserta frekuensi kemunculannya yang mengandung kata tsb
-		foreach ($df as $token => $doc_count) {
-
-			//hitung nilai idf (inverse document frequency) utk stiap kata/token
-			// rumus idf = log(total dokumen / jumlah dokumen yang mengandung kata/token)
-			$idf[$token] = log($total_doc / $doc_count);
-		}
-
-		// loop melalui setiap dokumen dan daftar kata didalamnya
-		foreach ($tf as $doc_id => $terms) {
-
-			// loop setiap kata 
-			foreach ($terms as $kata => $fq) {
-				//hitung tf_idf untuk setiap kata dalam dokumen
-				//tf adalah frekuensi kemunculan kata di dokumen
-				//idf adalah ukuran seberapa jarang kata muncul di seluruh dokumen
-				//jika idf tidak ditemukan, gunakan 0 sebagai default
-				$tf_idf[$doc_id][$kata] = $fq * ($idf[$kata] ?? 0);
-			}
-		}
-
-		return view('preprocessing.tf-idf', compact(
-			'title',
-			'tf_idf',
-		));
 	}
 
 	public function labeling()
 	{
 		$title = "Labeling";
-		$isLabel = DB::table('preprocessing')
-			->select('id', 'case_folding', 'label')->paginate(20);
+		$label = DB::table('preprocessing')
+			->select('id', 'case_folding', 'label')
+			->where('created_by', Auth::user()->id)
+			->paginate(20);
 
-		$hasLabelled = DB::table('preprocessing')
-			->whereNotNull('label')
-			->get();
+		return view('preprocessing.label.index', compact('title', 'label'));
+	}
 
-		return view('preprocessing.label.index', compact('title', 'isLabel', 'hasLabelled'));
+	public function editLabel(int $id)
+	{
+		$title = "Edit Label";
+		$label = DB::table('preprocessing')->find($id);
+
+		return view('preprocessing.label.edit', compact('label', 'title'));
 	}
 
 	public function updateLabel(Request $request, int $id)
@@ -119,11 +77,27 @@ class PreprocessingController extends Controller
 		return redirect()->route('preprocessing.label')->with('success', 'Label berhasil diupdate');
 	}
 
-	public function editLabel(int $id)
+	public function calculateBagOfWords()
 	{
-		$title = "Edit Label";
-		$label = DB::table('preprocessing')->find($id);
+		$title = 'Bag of Words';
 
-		return view('preprocessing.label.edit', compact('label', 'title'));
+		$data = DB::table('preprocessing')
+			->select('id', 'lemmatized')
+			->where('created_by', Auth::user()->id)
+			->paginate(2)
+			->appends(request()->query());
+
+		$tf = [];
+
+		foreach ($data as $d) {
+			$tokens = explode(' ', $d->lemmatized);
+			$tf[$d->id] = array_count_values($tokens);
+		}
+
+		return view('preprocessing.bag-of-words', compact(
+			'title',
+			'tf',
+			'data'
+		));
 	}
 }

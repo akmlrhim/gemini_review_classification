@@ -1,5 +1,12 @@
 @php
-  $show = DB::table('preprocessing')->whereNull('label')->doesntExist() && DB::table('preprocessing')->count() > 0;
+  $show =
+      !DB::table('preprocessing')
+          ->where('created_by', Auth::user()->id)
+          ->whereNull('label')
+          ->exists() &&
+      DB::table('preprocessing')
+          ->where('created_by', Auth::user()->id)
+          ->count() > 0;
 @endphp
 
 <nav class="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 text-sm antialiased">
@@ -22,24 +29,28 @@
 
         <x-nav-link href="{{ route('dashboard.index') }}">Dashboard</x-nav-link>
 
-        <li>
-          <button id="datasetNavbarLink" data-dropdown-toggle="datasetDropdown"
-            class="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">Dataset
-            <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-              viewBox="0 0 10 6">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="m1 1 4 4 4-4" />
-            </svg></button>
-          <div id="datasetDropdown"
-            class="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
-            <ul class="py-2 text-gray-700 dark:text-gray-400" aria-labelledby="dropdownLargeButton">
 
-              <x-nav-link-dropdown href="{{ route('dataset.index') }}">Full Dataset</x-nav-link-dropdown>
-              <x-nav-link-dropdown href="{{ route('dataset.contents') }}">Content only</x-nav-link-dropdown>
+        @if (Auth::user()->role == 'admin')
+          <li>
+            <button id="datasetNavbarLink" data-dropdown-toggle="datasetDropdown"
+              class="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">Dataset
+              <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 10 6">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="m1 1 4 4 4-4" />
+              </svg></button>
+            <div id="datasetDropdown"
+              class="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
+              <ul class="py-2 text-gray-700 dark:text-gray-400" aria-labelledby="dropdownLargeButton">
 
-            </ul>
-          </div>
-        </li>
+                <x-nav-link-dropdown href="{{ route('dataset.index') }}">Full Dataset</x-nav-link-dropdown>
+                <x-nav-link-dropdown href="{{ route('dataset.contents') }}">Content only</x-nav-link-dropdown>
+
+              </ul>
+            </div>
+          </li>
+        @endif
+
 
         <li>
           <button id="preproLink" data-dropdown-toggle="preproDropdown"
@@ -61,7 +72,7 @@
         </li>
 
         @if ($show)
-          <x-nav-link href="{{ route('preprocessing.tfidf') }}">TF-IDF</x-nav-link>
+          <x-nav-link href="{{ route('preprocessing.bag-of-word') }}">BoW</x-nav-link>
           <x-nav-link href="{{ route('result.naive-bayes') }}">Naive Bayes Clsf.</x-nav-link>
           <x-nav-link href="{{ route('result.confusion-matrix-form') }}">Conf. Matrix</x-nav-link>
         @endif
@@ -84,7 +95,7 @@
                 <x-nav-link-dropdown href="{{ route('manage-user.index') }}">Manage Users</x-nav-link-dropdown>
               @endif
 
-              <x-nav-link-dropdown href="#">My Profile</x-nav-link-dropdown>
+              <x-nav-link-dropdown href="{{ route('my-profile.index') }}">My Profile</x-nav-link-dropdown>
 
               <x-nav-link-dropdown href="#"
                 onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">Logout</x-nav-link-dropdown>

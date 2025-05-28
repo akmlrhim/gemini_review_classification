@@ -5,7 +5,6 @@
     <form action="{{ route('manage-user.update', $user->id) }}" class="space-y-4" method="POST">
       @csrf
       @method('PUT')
-
       <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
         <label for="role" class="w-full md:w-40 text-sm font-medium text-gray-900">Role</label>
         <div class="flex-1">

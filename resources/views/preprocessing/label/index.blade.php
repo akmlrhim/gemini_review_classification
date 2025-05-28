@@ -3,7 +3,7 @@
 
   <x-alert></x-alert>
 
-  @if ($isLabel->isEmpty())
+  @if ($label->isEmpty())
     <x-empty-data></x-empty-data>
   @else
     <div class="relative overflow-x-auto rounded-md">
@@ -22,13 +22,13 @@
           </tr>
         </thead>
         <tbody>
-          @foreach ($isLabel as $rows)
+          @foreach ($label as $rows)
             <tr class="text-sm bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
               <th scope="row" class="px-6 py-1 font-normal text-black dark:text-white">
                 {{ $rows->case_folding }}
               </th>
               <th class="px-6 py-1 font-normal text-black dark:text-white">
-                {{ $row->label }}
+                {{ $rows->label }}
               </th>
               <th class="px-6 py-1 font-normal text-black dark:text-white">
                 @if ($rows->label)
@@ -46,7 +46,7 @@
   @endif
 
   <div class="mt-3">
-    {{ $isLabel->links() }}
+    {{ $label->links() }}
   </div>
 
 

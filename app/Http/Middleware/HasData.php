@@ -5,9 +5,10 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class AllLabelled
+class HasData
 {
 	/**
 	 * Handle an incoming request.
@@ -20,8 +21,12 @@ class AllLabelled
 			->whereNull('label')
 			->exists();
 
-		if ($isAllLabelled) {
-			return redirect()->back()->with('error', 'Silahkan beri label pada semua data terlebih dahulu');
+		$hasData = DB::table('preprocessing')
+			->where('created_by', Auth::user()->id)
+			->exists();
+
+		if (!$hasData && !$isAllLabelled) {
+			return redirect()->back()->with('error', 'Anda tidak memiliki data dan semua data sudah diberi label.');
 		}
 
 		return $next($request);

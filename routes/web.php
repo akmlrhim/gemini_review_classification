@@ -9,6 +9,7 @@ use App\Http\Controllers\ResultController;
 use App\Http\Controllers\DatasetController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PreprocessingController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
 	return !Auth::check() ? redirect()->route('dashboard.index') : redirect()->route('login');
@@ -38,12 +39,12 @@ Route::middleware(['auth'])->group(function () {
 		Route::get('label', 'labeling')->name('preprocessing.label');
 		Route::get('search', 'search')->name('preprocessing.search');
 		Route::delete('delete-all', 'deleteAll')->name('preprocessing.delete.all');
-		Route::get('tf-idf', 'calculateTfIdf')->name('preprocessing.tfidf')->middleware('labelled');
-		Route::get('label/edit/{id}', 'editLabel')->name('preprocessing.label.edit');
+		Route::get('bag-of-words', 'calculateBagOfWords')->name('preprocessing.bag-of-word')->middleware('hasData');
+		Route::get('label/edit/{id}', 'editLabel')->name('preprocessing.label.edit')->middleware('hasData');
 		Route::put('label/update/{id}', 'updateLabel')->name('preprocessing.label.update');
 	});
 
-	Route::prefix('result')->middleware('labelled')->controller(ResultController::class)->group(function () {
+	Route::prefix('result')->middleware('hasData')->controller(ResultController::class)->group(function () {
 		Route::get('naive-bayes', 'calculateNaiveBayes')->name('result.naive-bayes');
 		Route::get('form-confusion-matrix', 'formInput')->name('result.confusion-matrix-form');
 		Route::post('confusion-matrix-process', 'processFormInput')->name('result.confusion-matrix-process');
@@ -52,4 +53,10 @@ Route::middleware(['auth'])->group(function () {
 
 	Route::get('import-csv', [ImportController::class, 'index'])->name('import.index');
 	Route::post('import-csv', [ImportController::class, 'store'])->name('import.store');
+
+	Route::prefix('my-profile')->group(function () {
+		Route::get('/', [ProfileController::class, 'index'])->name('my-profile.index');
+		Route::patch('update', [ProfileController::class, 'update'])->name('my-profile.update');
+		Route::patch('update-password', [ProfileController::class, 'updatePassword'])->name('my-profile.update.password');
+	});
 });
