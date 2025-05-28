@@ -108,14 +108,6 @@ class PreprocessingController extends Controller
 		return view('preprocessing.label.index', compact('title', 'isLabel', 'hasLabelled'));
 	}
 
-	public function giveLabel($id)
-	{
-		$title = "Beri label";
-		$label = DB::table('preprocessing')->find($id);
-
-		return view('preprocessing.label.give', compact('label', 'title'));
-	}
-
 	public function updateLabel(Request $request, int $id)
 	{
 		$request->validate(['label' => 'required']);
@@ -125,12 +117,6 @@ class PreprocessingController extends Controller
 			->update(['label' => $request->label]);
 
 		return redirect()->route('preprocessing.label')->with('success', 'Label berhasil diupdate');
-	}
-
-	public function nullableLabel()
-	{
-		DB::table('preprocessing')->update(['label' => NULL]);
-		return redirect()->back()->with('success', 'Label berhasil dihapus');
 	}
 
 	public function editLabel(int $id)

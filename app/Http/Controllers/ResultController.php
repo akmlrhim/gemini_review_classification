@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use phpDocumentor\Reflection\Types\Null_;
 
 class ResultController extends Controller
 {
@@ -85,131 +86,150 @@ class ResultController extends Controller
 	{
 		$title = "Confusion Matrix";
 
-		$testSize = $request->session()->get('test_size') / 100;
-		$randomSeed = 42;
+		// Ambil ukuran data test dalam persentase dari session
+		$testSize = ($request->session()->get('test_size') ?? 30) / 100;
+		$randomSeed = 0;
 
-		$data = DB::table('preprocessing')->select('id', 'lemmatized', 'label')
+		// Ambil semua data preprocessing dari DB
+		$data = DB::table('preprocessing')
+			->select('id', 'lemmatized', 'label')
 			->get()
 			->toArray();
 
-		srand($randomSeed); //random seed 
-		shuffle($data); // acak data
+		// Set seed dan acak data untuk reproducibility
+		srand($randomSeed);
+		shuffle($data);
 
-		$total = count($data);
-		$testCount = (int) round($total * $testSize);
-		$testData = array_slice($data, 0, $testCount); // data uji
-		$trainData = array_slice($data, $testCount); // data latih
+		// Hitung jumlah data dan batas data uji
+		$totalData = count($data);
+		$testCount = (int) round($totalData * $testSize);
 
-		// inisialisasi array utk aktual dan prediksi
-		$labels_actual = [];
-		$labels_predicted = [];
+		// Pisahkan data uji dan data latih
+		$testData = array_slice($data, 0, $testCount);
+		$trainData = array_slice($data, $testCount);
 
-		$tf = [];
-		foreach ($testData as $d) {
-			$tokens = explode(' ', $d->lemmatized);
-			$tf[$d->id] = array_count_values($tokens);
-			$labels_actual[$d->id] = $d->label;
+		// Inisialisasi array untuk label aktual dan frekuensi term dalam data uji
+		$labelsActual = [];
+		$tfTest = [];
+
+		foreach ($testData as $item) {
+			$tokens = explode(' ', $item->lemmatized);
+			$tfTest[$item->id] = array_count_values($tokens);
+			$labelsActual[$item->id] = $item->label;
 		}
 
-		$class_counts = [];
-		$word_freq = [];
+		// Hitung frekuensi kelas dan frekuensi kata per kelas di data latih
+		$classCounts = [];
+		$wordFreq = [];
 
-		foreach ($trainData as $d) {
-			$label = $d->label;
-			$class_counts[$label] = ($class_counts[$label] ?? 0) + 1;
-			$tokens = explode(' ', $d->lemmatized);
+		foreach ($trainData as $item) {
+			$label = $item->label;
+			$classCounts[$label] = ($classCounts[$label] ?? 0) + 1;
+
+			$tokens = explode(' ', $item->lemmatized);
 			foreach ($tokens as $word) {
-				$word_freq[$label][$word] = ($word_freq[$label][$word] ?? 0) + 1;
+				$wordFreq[$label][$word] = ($wordFreq[$label][$word] ?? 0) + 1;
 			}
 		}
 
-		// prior probability
-		$total_train_docs = count($trainData);
-		$class_prob = [];
-		foreach ($class_counts as $class => $count) {
-			$class_prob[$class] = $count / $total_train_docs;
+		// Total dokumen latih
+		$totalTrainDocs = count($trainData);
+
+		// Hitung prior probability tiap kelas
+		$classProb = [];
+		foreach ($classCounts as $class => $count) {
+			$classProb[$class] = $count / $totalTrainDocs;
 		}
 
-		$cond_prob = [];
-		foreach ($word_freq as $class => $freqs) {
-			$total_words = array_sum($freqs);
-			$vocab_size = count(array_unique(array_merge(...array_values($word_freq))));
-			foreach ($freqs as $word => $count) {
-				$cond_prob[$class][$word] = ($count + 1) / ($total_words + $vocab_size);
+		// Buat vocab global unik dari seluruh kelas dan kata
+		$vocab = [];
+		foreach ($wordFreq as $freqs) {
+			$vocab = array_merge($vocab, array_keys($freqs));
+		}
+		$vocab = array_unique($vocab);
+		$vocabSize = count($vocab);
+
+		// Hitung conditional probability tiap kata per kelas dengan smoothing Laplace
+		$condProb = [];
+		foreach ($wordFreq as $class => $freqs) {
+			$totalWordsInClass = array_sum($freqs);
+			foreach ($vocab as $word) {
+				$countWord = $freqs[$word] ?? 0;
+				$condProb[$class][$word] = ($countWord + 1) / ($totalWordsInClass + $vocabSize);
 			}
 		}
 
-		foreach ($tf as $doc_id => $terms) {
+		// Prediksi kelas untuk data uji
+		$labelsPredicted = [];
+		foreach ($tfTest as $docId => $terms) {
 			$scores = [];
-			foreach ($class_prob as $class => $prior) {
+			foreach ($classProb as $class => $prior) {
 				$scores[$class] = log($prior);
-				$total_words_in_class = array_sum($word_freq[$class] ?? []);
-				$vocab_size = count(array_unique(array_merge(...array_values($word_freq))));
+				$totalWordsInClass = array_sum($wordFreq[$class] ?? []);
+				// Karena condProb sudah lengkap untuk vocab, cukup pakai condProb langsung
 				foreach ($terms as $word => $count) {
-
-					//prob kata di kelas
-					$prob = $cond_prob[$class][$word] ?? (1 / ($total_words_in_class + $vocab_size));
+					$prob = $condProb[$class][$word] ?? (1 / ($totalWordsInClass + $vocabSize));
 					$scores[$class] += $count * log($prob);
 				}
 			}
-
-			// ambil kelas skor tertinggi sebagai prediksi
-			$labels_predicted[$doc_id] = array_keys($scores, max($scores))[0];
+			// Ambil kelas dengan skor tertinggi
+			$labelsPredicted[$docId] = array_keys($scores, max($scores))[0];
 		}
 
-		// inisialisasi confusion matrix 
-		$classes = array_values(array_unique(array_map(function($d) { return $d->label; }, $data)));
-		$conf_matrix = [];
+		// Kelas unik
+		$classes = array_values(array_unique(array_map(fn($d) => $d->label, $data)));
+
+		// Inisialisasi confusion matrix dengan 0
+		$confMatrix = [];
 		foreach ($classes as $actual) {
-			foreach ($classes as $predicted) {
-				$conf_matrix[$actual][$predicted] = 0;
+			$confMatrix[$actual] = array_fill_keys($classes, 0);
+		}
+
+		// Hitung confusion matrix
+		foreach ($labelsActual as $id => $actualLabel) {
+			$predictedLabel = $labelsPredicted[$id] ?? null;
+			if ($predictedLabel !== null) {
+				$confMatrix[$actualLabel][$predictedLabel]++;
 			}
 		}
 
-		// hitung confusion matrix berdasarkan prediksi
-		foreach ($labels_actual as $id => $actual_label) {
-			$predicted_label = $labels_predicted[$id];
-			$conf_matrix[$actual_label][$predicted_label]++;
-		}
-
-		//hitung metriks
+		// Hitung metrik per kelas
 		$metrics = [];
-		$total_test = count($testData);
-		foreach ($classes as $class) {
-			$TP = $conf_matrix[$class][$class]; //true positif
-			$FP = array_sum(array_column($conf_matrix, $class)) - $TP; //false positif
-			$FN = array_sum($conf_matrix[$class]) - $TP; // false negatif
-			$TN = $total_test - $TP - $FP - $FN; // true negatif
+		$totalTest = count($testData);
 
-			$precision = $TP + $FP > 0 ? $TP / ($TP + $FP) : 0; //presisi
-			$recall = $TP + $FN > 0 ? $TP / ($TP + $FN) : 0; //recall
-			$f1 = $precision + $recall > 0 ? 2 * ($precision * $recall) / ($precision + $recall) : 0; //f1 score
+		foreach ($classes as $class) {
+			$TP = $confMatrix[$class][$class];
+			$FP = array_sum(array_column($confMatrix, $class)) - $TP;
+			$FN = array_sum($confMatrix[$class]) - $TP;
+			$TN = $totalTest - $TP - $FP - $FN;
+
+			$precision = ($TP + $FP) > 0 ? $TP / ($TP + $FP) : 0;
+			$recall = ($TP + $FN) > 0 ? $TP / ($TP + $FN) : 0;
+			$f1 = ($precision + $recall) > 0 ? 2 * ($precision * $recall) / ($precision + $recall) : 0;
 
 			$metrics[$class] = [
-				'precision' => round($precision, 4) * 100,
-				'recall' => round($recall, 4) * 100,
-				'f1_score' => round($f1, 4) * 100,
+				'precision' => round($precision * 100, 2),
+				'recall' => round($recall * 100, 2),
+				'f1_score' => round($f1 * 100, 2),
 			];
 		}
 
-		// hitung akurasi 
+		// Hitung akurasi keseluruhan
 		$correct = 0;
-		foreach ($labels_actual as $id => $actual) {
-			// if ($labels_predicted[$id] === $actual) $correct++;
-			if ($labels_predicted[$id] === $actual) {
+		foreach ($labelsActual as $id => $actual) {
+			if (($labelsPredicted[$id] ?? null) === $actual) {
 				$correct++;
 			}
 		}
-		$accuracy = $total_test > 0 ? $correct / $total_test : 0;
+		$accuracy = $totalTest > 0 ? $correct / $totalTest : 0;
 
 		return view('result.conf-matrix', compact(
-			'conf_matrix',
+			'confMatrix',
 			'classes',
 			'metrics',
 			'accuracy',
 			'title',
-			'testSize',
-			'randomSeed'
+			'testSize'
 		));
 	}
 }

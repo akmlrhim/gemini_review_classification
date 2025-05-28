@@ -1,7 +1,7 @@
 <x-layout>
   <x-slot:title>{{ $title }}</x-slot:title>
 
-  @if (empty($conf_matrix))
+  @if (empty($confMatrix))
     <x-empty-data></x-empty-data>
   @else
     <div class="max-w-6xl mx-auto py-10 bg-white shadow-md rounded-lg p-6 mb-8 border border-gray-200">
@@ -14,7 +14,7 @@
         </h2>
         <h2 class="text-md font-medium mb-2 text-green-800">Akurasi :
           <span
-            class="bg-green-100 text-green-800 text-lg font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-green-400 border border-green-400">{{ number_format($accuracy * 100, 2) }}%</span>
+            class="bg-green-100 text-green-800 text-lg font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-green-400 border border-green-400">{{ $accuracy }}</span>
         </h2>
       </div>
 
@@ -35,7 +35,7 @@
                 <tr>
                   <th class="border px-4 py-2 bg-gray-100">{{ ucfirst($actual) }}</th>
                   @foreach ($classes as $pred)
-                    <td class="border px-4 py-2">{{ $conf_matrix[$actual][$pred] }}</td>
+                    <td class="border px-4 py-2">{{ $confMatrix[$actual][$pred] }}</td>
                   @endforeach
                 </tr>
               @endforeach

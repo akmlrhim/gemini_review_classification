@@ -14,13 +14,7 @@
               Content
             </th>
             <th scope="col" class="px-6 py-2 uppercase">
-              Label |
-              <form action="{{ route('preprocessing.nullable-label') }}" method="POST"
-                onsubmit="return confirm('are you sure?');" class="inline">
-                @csrf
-                @method('PUT')
-                <button type="submit" class="bg-blue-600 text-sm px-1 py-0.5 rounded">null</button>
-              </form>
+              Label
             </th>
             <th scope="col" class="px-6 py-2 uppercase">
               aksi
@@ -34,12 +28,7 @@
                 {{ $rows->case_folding }}
               </th>
               <th class="px-6 py-1 font-normal text-black dark:text-white">
-                @if ($rows->label)
-                  {{ $rows->label }}
-                @else
-                  <a href="{{ route('preprocessing.label.give', $rows->id) }}"
-                    class="font-normal text-blue-600 dark:text-blue-500 hover:underline">beri label</a>
-                @endif
+                {{ $row->label }}
               </th>
               <th class="px-6 py-1 font-normal text-black dark:text-white">
                 @if ($rows->label)
