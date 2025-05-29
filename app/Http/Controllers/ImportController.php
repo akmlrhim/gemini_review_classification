@@ -21,7 +21,6 @@ class ImportController extends Controller
 			'file' => 'required|mimes:csv|max:2048',
 		]);
 
-
 		$file = $request->file('file');
 		$handle = fopen($file->path(), 'r');
 
