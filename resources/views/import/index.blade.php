@@ -1,6 +1,8 @@
 <x-layout>
   <x-slot:title>{{ $title }}</x-slot:title>
 
+  <x-alert></x-alert>
+
   <div class="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6 mb-2 border border-gray-200">
     <form action="{{ route('import.store') }}" method="POST" enctype="multipart/form-data" id="importForm">
       @csrf
