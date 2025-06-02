@@ -44,6 +44,14 @@ class PreprocessingController extends Controller
 			->where('created_by', Auth::user()->id)
 			->delete();
 
+		DB::table('train_data')
+			->where('created_by', Auth::user()->id)
+			->delete();
+
+		DB::table('test_data')
+			->where('created_by', Auth::user()->id)
+			->delete();
+
 		return redirect()->route('preprocessing.index')->with('success', 'Data berhasil dihapus');
 	}
 
@@ -88,12 +96,16 @@ class PreprocessingController extends Controller
 			return redirect()->back()->with('error', 'Jumlah data kurang dari 2, tidak bisa dibagi.');
 		}
 
+		srand(42);
 		shuffle($preprocessedData);
 
 		$total = count($preprocessedData);
-		$trainCount = round($total * 0.8);
+		$trainCount = round($total * 0.75);
 		$trainData = array_slice($preprocessedData, 0, $trainCount);
 		$testData = array_slice($preprocessedData, $trainCount);
+
+		DB::table('train_data')->where('created_by', Auth::user()->id)->delete();
+		DB::table('test_data')->where('created_by', Auth::user()->id)->delete();
 
 		foreach ($trainData as $item) {
 			DB::table('train_data')->insert([

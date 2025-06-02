@@ -90,23 +90,6 @@ class ResultController extends Controller
 		));
 	}
 
-	public function formInput()
-	{
-		$title = "Confusion Matrix";
-		return view('result.conf-matrix-form', compact('title'));
-	}
-
-	public function processFormInput(Request $request)
-	{
-		$request->validate([
-			'test_size' => 'required|numeric|min:1|max:100'
-		]);
-
-		session(['test_size' => $request->test_size]);
-
-		return redirect()->route('result.confusion-matrix');
-	}
-
 	public function confusionMatrix(Request $request)
 	{
 		$title = "Confusion Matrix";
@@ -123,12 +106,10 @@ class ResultController extends Controller
 			->get();
 
 		if ($testData->isEmpty() || $trainData->isEmpty()) {
-			return back()->with('error', 'Data latih atau uji kosong.');
+			return redirect()->back()->with('error', 'Data latih atau uji kosong.');
 		}
 
-		// =====================
-		// MODEL TRAINING
-		// =====================
+		// TRAINING DATA
 		$classCounts = [];
 		$wordFreq = [];
 
@@ -172,9 +153,8 @@ class ResultController extends Controller
 			}
 		}
 
-		// =====================
-		// PREDIKSI
-		// =====================
+
+		// LABEL PREDIKSI 
 		$labelsActual = [];
 		$labelsPredicted = [];
 
@@ -201,9 +181,7 @@ class ResultController extends Controller
 			$labelsPredicted[$id] = array_keys($scores, max($scores))[0];
 		}
 
-		// =====================
-		// CONFUSION MATRIX
-		// =====================
+		// CONFUSION MATRIX 
 		$classes = array_values(array_unique(array_merge(
 			array_values($labelsActual),
 			array_values($labelsPredicted)

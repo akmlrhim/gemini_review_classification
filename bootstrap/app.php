@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Middleware\AllLabelled;
 use App\Http\Middleware\AuthCheck;
 use App\Http\Middleware\HasData;
+use App\Http\Middleware\HasSplit;
 use App\Http\Middleware\IsAdmin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -18,7 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
 		$middleware->alias([
 			'auth' => AuthCheck::class,
 			'admin' => IsAdmin::class,
-			'hasData' => HasData::class
+			'hasData' => HasData::class,
+			'hasSplit' => HasSplit::class,
 		]);
 	})
 	->withExceptions(function (Exceptions $exceptions) {

@@ -6,12 +6,7 @@
   @else
     <div class="max-w-6xl mx-auto py-10 bg-white shadow-md rounded-lg p-6 mb-8 border border-gray-200">
 
-      <a href="{{ route('result.confusion-matrix-form') }}" class="font-medium text-blue-600 hover:underline">Kembali</a>
-
       <div class="mt-5">
-
-        <h2 class="text-sm font-medium mb-2 text-gray-800">Persentase data uji: {{ session()->get('test_size') }} %
-        </h2>
         <h2 class="text-md font-medium mb-2 text-green-800">Akurasi :
           <span
             class="bg-green-100 text-green-800 text-lg font-bold me-2 px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-green-400 border border-green-400">{{ number_format($accuracy * 100, 2) }}%</span>

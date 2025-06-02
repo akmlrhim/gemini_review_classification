@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class HasData
+class HasSplit
 {
 	/**
 	 * Handle an incoming request.
@@ -17,17 +17,16 @@ class HasData
 	 */
 	public function handle(Request $request, Closure $next): Response
 	{
-		$isAllLabelled = DB::table('preprocessing')
-			->whereNull('label')
-			->exists();
-
-		$hasData = DB::table('preprocessing')
+		$hasTrainData = DB::table('train_data')
 			->where('created_by', Auth::user()->id)
 			->exists();
 
+		$hasTestData = DB::table('test_data')
+			->where('created_by', Auth::user()->id)
+			->exists();
 
-		if (!$hasData && !$isAllLabelled) {
-			return redirect()->back()->with('error', 'Anda tidak memiliki data dan semua data sudah diberi label.');
+		if (!$hasTrainData && !$hasTestData) {
+			return redirect()->back()->with('error', 'Anda belum melakukan pembagian data.');
 		}
 
 		return $next($request);

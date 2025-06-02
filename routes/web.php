@@ -23,7 +23,6 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout')->middle
 
 Route::middleware(['auth'])->group(function () {
 	Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-	Route::delete('dashboard/reset', [DashboardController::class, 'reset'])->name('dashboard.reset');
 
 	Route::resource('manage-user', UserController::class)->middleware('admin');
 
@@ -37,11 +36,9 @@ Route::middleware(['auth'])->group(function () {
 		Route::post('split-data', 'splitData')->name('preprocessing.split-data');
 	});
 
-	Route::prefix('result')->middleware('hasData')->controller(ResultController::class)->group(function () {
-		Route::get('bag-of-words', 'calculateBagOfWords')->name('result.bag-of-word')->middleware('hasData');
+	Route::prefix('result')->middleware('hasSplit')->controller(ResultController::class)->group(function () {
+		Route::get('bag-of-words', 'calculateBagOfWords')->name('result.bag-of-word');
 		Route::get('naive-bayes', 'calculateNaiveBayes')->name('result.naive-bayes');
-		Route::get('form-confusion-matrix', 'formInput')->name('result.confusion-matrix-form');
-		Route::post('confusion-matrix-process', 'processFormInput')->name('result.confusion-matrix-process');
 		Route::get('confusion-matrix', 'confusionMatrix')->name('result.confusion-matrix');
 	});
 
