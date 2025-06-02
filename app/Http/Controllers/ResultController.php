@@ -8,11 +8,35 @@ use Illuminate\Support\Facades\Auth;
 
 class ResultController extends Controller
 {
+	public function calculateBagOfWords()
+	{
+		$title = 'Bag of Words';
+
+		$data = DB::table('train_data')
+			->select('id', 'lemmatized')
+			->where('created_by', Auth::user()->id)
+			->paginate(2)
+			->appends(request()->query());
+
+		$tf = [];
+
+		foreach ($data as $d) {
+			$tokens = explode(' ', $d->lemmatized);
+			$tf[$d->id] = array_count_values($tokens);
+		}
+
+		return view('preprocessing.bag-of-words', compact(
+			'title',
+			'tf',
+			'data'
+		));
+	}
+
 	public function calculateNaiveBayes()
 	{
 		$title = 'Naive Bayes';
 
-		$data = DB::table('preprocessing')
+		$data = DB::table('train_data')
 			->select('id', 'lemmatized', 'label')
 			->where('created_by', Auth::user()->id)
 			->get();
@@ -87,39 +111,24 @@ class ResultController extends Controller
 	{
 		$title = "Confusion Matrix";
 
-		$testSize = ($request->session()->get('test_size') ?? 30) / 100;
-		$randomSeed = 42;
-
-		$data = DB::table('preprocessing')
+		// Ambil data dari database
+		$testData = DB::table('test_data')
 			->select('id', 'lemmatized', 'label')
 			->where('created_by', Auth::user()->id)
-			->get()
-			->toArray();
+			->get();
 
-		//seed dan acak data untuk reproducibility
-		srand($randomSeed);
-		shuffle($data);
+		$trainData = DB::table('train_data')
+			->select('id', 'lemmatized', 'label')
+			->where('created_by', Auth::user()->id)
+			->get();
 
-		//hitung jumlah data dan batas data uji
-		$totalData = count($data);
-		$testCount = (int) round($totalData * $testSize);
-
-		//pisahkan data uji dan latih
-		$testData = array_slice($data, 0, $testCount);
-		$trainData = array_slice($data, $testCount);
-
-		//inisialisasi array untuk label aktual dan frekuensi term dalam data uji
-		$labelsActual = [];
-		$tfTest = [];
-
-		//frekuensi kata per dokumen pada data uji
-		foreach ($testData as $item) {
-			$tokens = explode(' ', $item->lemmatized);
-			$tfTest[$item->id] = array_count_values($tokens);
-			$labelsActual[$item->id] = $item->label;
+		if ($testData->isEmpty() || $trainData->isEmpty()) {
+			return back()->with('error', 'Data latih atau uji kosong.');
 		}
 
-		//hitung frekuensi kelas dan frekuensi kata per kelas di data latih
+		// =====================
+		// MODEL TRAINING
+		// =====================
 		$classCounts = [];
 		$wordFreq = [];
 
@@ -133,69 +142,89 @@ class ResultController extends Controller
 			}
 		}
 
-		//tot dok. latih
 		$totalTrainDocs = count($trainData);
 
-		//hitung prior probability tiap kelas
+		// P(Label)
 		$classProb = [];
 		foreach ($classCounts as $class => $count) {
-			$classProb[$class] = $count / $totalTrainDocs; // p(c)
+			$classProb[$class] = $count / $totalTrainDocs;
 		}
 
-		//uniq vocab dari frekuensi kata
+		// Vocab
 		$vocab = [];
-		foreach ($wordFreq as $freqs) {
-			$vocab = array_merge($vocab, array_keys($freqs));
+
+		foreach ($wordFreq as $label => $words) {
+			foreach (array_keys($words) as $word) {
+				$vocab[$word] = true;
+			}
 		}
-		$vocab = array_unique($vocab);
+
+		$vocab = array_keys($vocab);
 		$vocabSize = count($vocab);
 
-		//htg conditional probability tiap kata per kelas dengan smoothing Laplace
+		// P(Kata | Label)
 		$condProb = [];
 		foreach ($wordFreq as $class => $freqs) {
-			$totalWordsInClass = array_sum($freqs);
+			$totalWords = array_sum($freqs);
 			foreach ($vocab as $word) {
-				$countWord = $freqs[$word] ?? 0;
-				$condProb[$class][$word] = ($countWord + 1) / ($totalWordsInClass + $vocabSize); // P(word|clas)
+				$count = $freqs[$word] ?? 0;
+				$condProb[$class][$word] = ($count + 1) / ($totalWords + $vocabSize);
 			}
 		}
 
-		//prediksi kelas untuk data uji
+		// =====================
+		// PREDIKSI
+		// =====================
+		$labelsActual = [];
 		$labelsPredicted = [];
-		foreach ($tfTest as $docId => $terms) {
+
+		foreach ($testData as $item) {
+			$id = $item->id;
+			$labelsActual[$id] = $item->label;
+
+			$tokens = explode(' ', $item->lemmatized);
+			$termFreq = array_count_values($tokens);
+
 			$scores = [];
 			foreach ($classProb as $class => $prior) {
-				$scores[$class] = log($prior);
+				$score = log($prior);
 				$totalWordsInClass = array_sum($wordFreq[$class] ?? []);
-				//condProb sudah lengkap untuk vocab, cukup pakai condProb langsung
-				foreach ($terms as $word => $count) {
+
+				foreach ($termFreq as $word => $count) {
 					$prob = $condProb[$class][$word] ?? (1 / ($totalWordsInClass + $vocabSize));
-					$scores[$class] += $count * log($prob);
+					$score += $count * log($prob);
 				}
+
+				$scores[$class] = $score;
 			}
-			//kelas dengan skor tertinggi
-			$labelsPredicted[$docId] = array_keys($scores, max($scores))[0];
+
+			$labelsPredicted[$id] = array_keys($scores, max($scores))[0];
 		}
 
-		//kelas unik
-		$classes = array_values(array_unique(array_map(fn($d) => $d->label, $data)));
+		// =====================
+		// CONFUSION MATRIX
+		// =====================
+		$classes = array_values(array_unique(array_merge(
+			array_values($labelsActual),
+			array_values($labelsPredicted)
+		)));
 
 		$confMatrix = [];
 		foreach ($classes as $actual) {
 			$confMatrix[$actual] = array_fill_keys($classes, 0);
 		}
 
-		//confusion matrix
-		foreach ($labelsActual as $id => $actualLabel) {
-			$predictedLabel = $labelsPredicted[$id] ?? null;
-			if ($predictedLabel !== null) {
-				$confMatrix[$actualLabel][$predictedLabel]++;
-			}
+		foreach ($labelsActual as $id => $actual) {
+			$predicted = $labelsPredicted[$id];
+			$confMatrix[$actual][$predicted]++;
 		}
 
-		//metrik per kelas
+		// =====================
+		// METRIK
+		// =====================
 		$metrics = [];
 		$totalTest = count($testData);
+		$correct = 0;
 
 		foreach ($classes as $class) {
 			$TP = $confMatrix[$class][$class];
@@ -212,15 +241,10 @@ class ResultController extends Controller
 				'recall' => round($recall * 100, 2),
 				'f1_score' => round($f1 * 100, 2),
 			];
+
+			$correct += $TP;
 		}
 
-		//akurasi keseluruhan
-		$correct = 0;
-		foreach ($labelsActual as $id => $actual) {
-			if (($labelsPredicted[$id] ?? null) === $actual) {
-				$correct++;
-			}
-		}
 		$accuracy = $totalTest > 0 ? $correct / $totalTest : 0;
 
 		return view('result.conf-matrix', compact(
@@ -228,8 +252,7 @@ class ResultController extends Controller
 			'classes',
 			'metrics',
 			'accuracy',
-			'title',
-			'testSize'
+			'title'
 		));
 	}
 }

@@ -27,24 +27,18 @@ Route::middleware(['auth'])->group(function () {
 
 	Route::resource('manage-user', UserController::class)->middleware('admin');
 
-	Route::prefix('dataset')->controller(DatasetController::class)->group(function () {
-		Route::get('/', 'index')->name('dataset.index');
-		Route::get('contents', 'contents')->name('dataset.contents');
-		Route::get('search', 'search')->name('dataset.search');
-		Route::delete('delete-all', 'deleteAll')->name('dataset.delete.all');
-	});
-
 	Route::prefix('preprocessing')->controller(PreprocessingController::class)->group(function () {
 		Route::get('/', 'index')->name('preprocessing.index');
 		Route::get('label', 'labeling')->name('preprocessing.label');
 		Route::get('search', 'search')->name('preprocessing.search');
 		Route::delete('delete-all', 'deleteAll')->name('preprocessing.delete.all');
-		Route::get('bag-of-words', 'calculateBagOfWords')->name('preprocessing.bag-of-word')->middleware('hasData');
 		Route::get('label/edit/{id}', 'editLabel')->name('preprocessing.label.edit')->middleware('hasData');
 		Route::put('label/update/{id}', 'updateLabel')->name('preprocessing.label.update');
+		Route::post('split-data', 'splitData')->name('preprocessing.split-data');
 	});
 
 	Route::prefix('result')->middleware('hasData')->controller(ResultController::class)->group(function () {
+		Route::get('bag-of-words', 'calculateBagOfWords')->name('result.bag-of-word')->middleware('hasData');
 		Route::get('naive-bayes', 'calculateNaiveBayes')->name('result.naive-bayes');
 		Route::get('form-confusion-matrix', 'formInput')->name('result.confusion-matrix-form');
 		Route::post('confusion-matrix-process', 'processFormInput')->name('result.confusion-matrix-process');

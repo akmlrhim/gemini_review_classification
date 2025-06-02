@@ -77,27 +77,44 @@ class PreprocessingController extends Controller
 		return redirect()->route('preprocessing.label')->with('success', 'Label berhasil diupdate');
 	}
 
-	public function calculateBagOfWords()
+	public function splitData()
 	{
-		$title = 'Bag of Words';
-
-		$data = DB::table('preprocessing')
-			->select('id', 'lemmatized')
+		$preprocessedData = DB::table('preprocessing')
 			->where('created_by', Auth::user()->id)
-			->paginate(2)
-			->appends(request()->query());
+			->get()
+			->toArray();
 
-		$tf = [];
-
-		foreach ($data as $d) {
-			$tokens = explode(' ', $d->lemmatized);
-			$tf[$d->id] = array_count_values($tokens);
+		if (count($preprocessedData) < 2) {
+			return redirect()->back()->with('error', 'Jumlah data kurang dari 2, tidak bisa dibagi.');
 		}
 
-		return view('preprocessing.bag-of-words', compact(
-			'title',
-			'tf',
-			'data'
-		));
+		shuffle($preprocessedData);
+
+		$total = count($preprocessedData);
+		$trainCount = round($total * 0.8);
+		$trainData = array_slice($preprocessedData, 0, $trainCount);
+		$testData = array_slice($preprocessedData, $trainCount);
+
+		foreach ($trainData as $item) {
+			DB::table('train_data')->insert([
+				'lemmatized' => $item->lemmatized,
+				'label' => $item->label,
+				'created_by' => $item->created_by,
+				'created_at' => now(),
+				'updated_at' => now(),
+			]);
+		}
+
+		foreach ($testData as $item) {
+			DB::table('test_data')->insert([
+				'lemmatized' => $item->lemmatized,
+				'label' => $item->label,
+				'created_by' => $item->created_by,
+				'created_at' => now(),
+				'updated_at' => now(),
+			]);
+		}
+
+		return redirect()->back()->with('success', "Data berhasil dibagi: $trainCount training, " . ($total - $trainCount) . " testing.");
 	}
 }
