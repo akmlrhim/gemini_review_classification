@@ -96,11 +96,11 @@ class PreprocessingController extends Controller
 			return redirect()->back()->with('error', 'Jumlah data kurang dari 2, tidak bisa dibagi.');
 		}
 
-		srand(42);
+		srand(10);
 		shuffle($preprocessedData);
 
 		$total = count($preprocessedData);
-		$trainCount = round($total * 0.80);
+		$trainCount = round($total * 0.80); // 80% untuk training, 20% untuk testing
 		$trainData = array_slice($preprocessedData, 0, $trainCount);
 		$testData = array_slice($preprocessedData, $trainCount);
 

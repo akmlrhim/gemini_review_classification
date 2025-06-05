@@ -45,7 +45,7 @@ class ImportController extends Controller
 		}
 		fclose($handle);
 
-		return redirect()->route('dataset.index')->with('success', 'Import successfully');
+		return redirect()->route('preprocessing.index')->with('success', 'Import successfully');
 	}
 
 	public function getChunkData($chunkdata)
@@ -56,6 +56,7 @@ class ImportController extends Controller
 			$stopword = $column[2];
 			$lemmatized = $column[3];
 			$label = $column[4];
+			$polarity = $column[5];
 
 			$preprocessing = new Preprocessing();
 			$preprocessing->case_folding = $case_folding;
@@ -63,6 +64,7 @@ class ImportController extends Controller
 			$preprocessing->stopword = $stopword;
 			$preprocessing->lemmatized = $lemmatized;
 			$preprocessing->label = $label;
+			$preprocessing->polarity = $polarity;
 			$preprocessing->created_by = Auth::user()->id;
 			$preprocessing->save();
 		}

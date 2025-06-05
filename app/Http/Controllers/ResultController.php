@@ -41,60 +41,78 @@ class ResultController extends Controller
 			->where('created_by', Auth::user()->id)
 			->get();
 
-		$features = []; //tf-idf
-		$labels = []; //label
+		$features = []; // fitur BoW per dokumen
+		$labels = [];   // label per dokumen
 		$total_doc = count($data);
 
+		// bangun fitur dan label
 		foreach ($data as $d) {
 			$tokens = explode(' ', $d->lemmatized);
-			$token_counts = array_count_values($tokens); // bow
+			$token_counts = array_count_values($tokens); // hitung frekuensi kata
 			$features[$d->id] = $token_counts;
 			$labels[$d->id] = $d->label;
 		}
 
+		// hitung prior probabilitas kelas P(class)
 		$class_prob = [];
-		$cond_prob = [];
-
 		foreach ($labels as $label) {
 			if (!isset($class_prob[$label])) {
 				$class_prob[$label] = 0;
 			}
 			$class_prob[$label]++;
 		}
-
 		foreach ($class_prob as $label => $count) {
 			$class_prob[$label] = $count / $total_doc;
 		}
 
+		// Hitung total kata per kelas untuk denominator smoothing
+		$cond_prob = [];    // P(word|class)
+		$word_counts_by_class = []; // total count kata per kelas
+		$vocab = [];        // untuk menghitung vocabulary size
+
+		// Hitung jumlah kata per kelas dan kumpulkan vocab
 		foreach ($features as $doc_id => $terms) {
 			$label = $labels[$doc_id];
+			if (!isset($word_counts_by_class[$label])) {
+				$word_counts_by_class[$label] = 0;
+			}
 			foreach ($terms as $word => $count) {
 				if (!isset($cond_prob[$label][$word])) {
 					$cond_prob[$label][$word] = 0;
 				}
 				$cond_prob[$label][$word] += $count;
+				$word_counts_by_class[$label] += $count;
+
+				$vocab[$word] = true;
 			}
 		}
 
+		$vocab_size = count($vocab);
+
+		// Hitung conditional probabilities
 		foreach ($cond_prob as $label => $word_counts) {
-			$total_words = array_sum($word_counts);
+			$total_words = $word_counts_by_class[$label];
 			foreach ($word_counts as $word => $count) {
-				$cond_prob[$label][$word] = ($count + 1) / ($total_words + count($features));
+				$cond_prob[$label][$word] = ($count + 1) / ($total_words + $vocab_size);
 			}
 		}
+
+		//jika ada kata yang tidak muncul di kelas tertentu, 
+		//nilai smoothing (biasanya 1 / (total_words + vocab_size))
 
 		return view('result.naive-bayes', compact(
 			'title',
 			'class_prob',
 			'cond_prob',
+			'vocab_size'
 		));
 	}
+
 
 	public function confusionMatrix(Request $request)
 	{
 		$title = "Confusion Matrix";
 
-		// Ambil data dari database
 		$testData = DB::table('test_data')
 			->select('id', 'lemmatized', 'label')
 			->where('created_by', Auth::user()->id)
