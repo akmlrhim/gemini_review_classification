@@ -13,16 +13,16 @@
   @if ($users->isEmpty())
     <x-empty-data></x-empty-data>
   @else
-    <div class="relative overflow-x-auto rounded-md p-6">
-      <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+    <div class="relative overflow-x-auto p-6">
+      <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 rounded-lg overflow-hidden">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
-            <th scope="col" class="px-3 py-2">#</th>
+            <th scope="col" class="px-3 py-2 rounded-tl-lg">#</th>
             <th scope="col" class="px-3 py-2 uppercase">name</th>
             <th scope="col" class="px-3 py-2 uppercase">email</th>
             <th scope="col" class="px-3 py-2 uppercase">role</th>
             <th scope="col" class="px-3 py-2 uppercase">status</th>
-            <th scope="col" class="px-3 py-2 uppercase">action</th>
+            <th scope="col" class="px-3 py-2 uppercase rounded-tr-lg">action</th>
           </tr>
         </thead>
         <tbody>
@@ -46,7 +46,7 @@
               <td class="px-3 py-2 whitespace-nowrap dark:text-white">
                 <div class="inline-flex gap-2 items-center">
                   <a href="{{ route('manage-user.edit', $user->id) }}"
-                    class="text-yellow-600 hover:underline whitespace-nowrap">Edit</a>
+                    class="text-yellow-600 hover:underline whitespace-nowrap">Edit</a>|
                   <form action="{{ route('manage-user.destroy', $user->id) }}" method="POST"
                     onsubmit="return confirm('Apakah anda yakin?');">
                     @csrf
@@ -60,7 +60,6 @@
           @endforeach
         </tbody>
       </table>
-
     </div>
     {{ $users->links() }}
   @endif

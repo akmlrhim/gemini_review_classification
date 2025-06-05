@@ -100,7 +100,7 @@ class PreprocessingController extends Controller
 		shuffle($preprocessedData);
 
 		$total = count($preprocessedData);
-		$trainCount = round($total * 0.75);
+		$trainCount = round($total * 0.80);
 		$trainData = array_slice($preprocessedData, 0, $trainCount);
 		$testData = array_slice($preprocessedData, $trainCount);
 
@@ -127,6 +127,8 @@ class PreprocessingController extends Controller
 			]);
 		}
 
-		return redirect()->back()->with('success', "Data berhasil dibagi: $trainCount training, " . ($total - $trainCount) . " testing.");
+		return redirect()
+			->back()
+			->with('success', "Data berhasil dibagi: $trainCount training, " . ($total - $trainCount) . " testing.");
 	}
 }

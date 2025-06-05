@@ -17,8 +17,8 @@
 
       <div class="mt-3">
         <button type="button" onclick="window.location.href='{{ route('preprocessing.index') }}'"
-          class="bg-gray-500 text-sm text-white px-3 py-1 rounded-md uppercase">Back</button>
-        <button type="submit" class="bg-blue-500 text-sm text-white px-3 py-1 rounded-md uppercase"
+          class="bg-gray-500 text-sm text-white px-3 font-bold py-1 rounded-md uppercase">Back</button>
+        <button type="submit" class="bg-blue-500 text-sm font-bold text-white px-3 py-1 rounded-md uppercase"
           id="importBtn">import</button>
       </div>
     </form>

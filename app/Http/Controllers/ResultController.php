@@ -25,7 +25,7 @@ class ResultController extends Controller
 			$tf[$d->id] = array_count_values($tokens);
 		}
 
-		return view('preprocessing.bag-of-words', compact(
+		return view('result.bag-of-words', compact(
 			'title',
 			'tf',
 			'data'
@@ -172,7 +172,7 @@ class ResultController extends Controller
 
 				foreach ($termFreq as $word => $count) {
 					$prob = $condProb[$class][$word] ?? (1 / ($totalWordsInClass + $vocabSize));
-					$score += $count * log($prob);
+					$score += $count * log($prob); // log(P(word|class))^count
 				}
 
 				$scores[$class] = $score;
@@ -210,9 +210,9 @@ class ResultController extends Controller
 			$FN = array_sum($confMatrix[$class]) - $TP;
 			$TN = $totalTest - $TP - $FP - $FN;
 
-			$precision = ($TP + $FP) > 0 ? $TP / ($TP + $FP) : 0;
-			$recall = ($TP + $FN) > 0 ? $TP / ($TP + $FN) : 0;
-			$f1 = ($precision + $recall) > 0 ? 2 * ($precision * $recall) / ($precision + $recall) : 0;
+			$precision = $TP / ($TP + $FP);
+			$recall =  $TP / ($TP + $FN);
+			$f1 =  2 * ($precision * $recall) / ($precision + $recall);
 
 			$metrics[$class] = [
 				'precision' => round($precision * 100, 2),

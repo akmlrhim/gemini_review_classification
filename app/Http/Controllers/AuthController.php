@@ -34,7 +34,7 @@ class AuthController extends Controller
 		}
 
 		if ($user->status !== 'active') {
-			return back()->withInput()->with('error', 'Akun Anda belum aktif. Silakan hubungi admin.');
+			return back()->withInput()->with('error', 'Akun anda belum aktif. Silakan hubungi admin.');
 		}
 
 		Auth::login($user);
@@ -71,7 +71,7 @@ class AuthController extends Controller
 			'email' => $request->email,
 			'password' => Hash::make($request->password),
 			'role' => 'user',
-			'status' => 'active',
+			'status' => 'inactive',
 			'created_at' => now(),
 			'updated_at' => now()
 		]);
