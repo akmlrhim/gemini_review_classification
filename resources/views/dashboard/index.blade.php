@@ -58,13 +58,41 @@
             Preprocessing</strong>.
         </li>
         <li>
-          Gunakan tombol <em>Import Data</em> untuk mengunggah file hasil cleaning dari Google Colab.
+          Gunakan tombol import data untuk mengunggah file hasil cleaning dari Google Colab.
         </li>
         <li>
-          Data yang telah dibersihkan kini siap digunakan untuk proses analisis.
+          Lakukan split data untuk membagi data menjadi data latih (train) dan data uji (test) dengan memasukkan
+          persentase data train yang diinginkan misal 80 % persen, maka data uji (test) akan menjadi sisanya yaitu 20 %
+          persen.
+        </li>
+        <li>
+          Hasil perhitungan Bag Of Word, Naive Bayes, dan Confusion Matrix akan dapat langsung dilihat.
         </li>
       </ul>
+    </div>
 
+    <div class="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 flex flex-col justify-center items-center">
+        <h2 class="text-md font-medium text-gray-700 mb-2 text-center">Jumlah data latih / train</h2>
+        <p class="text-xl font-bold text-blue-600">{{ $trainData }}</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 flex flex-col justify-center items-center">
+        <h2 class="text-md font-medium text-gray-700 mb-2 text-center">Jumlah Data uji / test</h2>
+        <p class="text-xl font-bold text-red-600">{{ $testData }}</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 flex flex-col justify-center items-center">
+        <h2 class="text-md font-medium text-gray-700 mb-2 text-center">Jumlah data</h2>
+        <p class="text-xl font-bold text-red-600">{{ $totalData }}</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 md:col-span-3">
+        <h2 class="text-md font-medium text-gray-700 mb-4 text-center">Perbandingan jumlah label</h2>
+        <div class="relative overflow-x-auto rounded-md">
+          <canvas id="labelChart" class="w-[300px] h-[300px] mx-auto"></canvas>
+        </div>
+      </div>
     </div>
   @endif
 

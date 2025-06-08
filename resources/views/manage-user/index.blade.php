@@ -61,9 +61,11 @@
         </tbody>
       </table>
     </div>
-    {{ $users->links() }}
   @endif
 
+  <div class="ml-6 mr-6">
+    {{ $users->links() }}
+  </div>
 
 
 </x-layout>

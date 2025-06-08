@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class PreprocessingController extends Controller
 {
@@ -85,10 +86,23 @@ class PreprocessingController extends Controller
 		return redirect()->route('preprocessing.label')->with('success', 'Label berhasil diupdate');
 	}
 
-	public function splitData()
+	public function splitData(Request $request)
 	{
+		$validator = Validator::make($request->all(), [
+			'train_data' => 'required|numeric|min:1|max:90',
+		]);
+
+		if ($validator->fails()) {
+			return redirect()->back()
+				->withErrors($validator)
+				->withInput()
+				->with('showModal', true);
+		}
+
+		$trainDataRatio = $request->train_data / 100;
+
 		$preprocessedData = DB::table('preprocessing')
-			->where('created_by', Auth::user()->id)
+			->where('created_by', Auth::id())
 			->get()
 			->toArray();
 
@@ -96,16 +110,17 @@ class PreprocessingController extends Controller
 			return redirect()->back()->with('error', 'Jumlah data kurang dari 2, tidak bisa dibagi.');
 		}
 
+		// Acak data
 		srand(10);
 		shuffle($preprocessedData);
 
 		$total = count($preprocessedData);
-		$trainCount = round($total * 0.80); // 80% untuk training, 20% untuk testing
+		$trainCount = round($total * $trainDataRatio);
 		$trainData = array_slice($preprocessedData, 0, $trainCount);
 		$testData = array_slice($preprocessedData, $trainCount);
 
-		DB::table('train_data')->where('created_by', Auth::user()->id)->delete();
-		DB::table('test_data')->where('created_by', Auth::user()->id)->delete();
+		DB::table('train_data')->where('created_by', Auth::id())->delete();
+		DB::table('test_data')->where('created_by', Auth::id())->delete();
 
 		foreach ($trainData as $item) {
 			DB::table('train_data')->insert([
@@ -117,6 +132,7 @@ class PreprocessingController extends Controller
 			]);
 		}
 
+		// Masukkan data testing
 		foreach ($testData as $item) {
 			DB::table('test_data')->insert([
 				'lemmatized' => $item->lemmatized,
@@ -127,8 +143,6 @@ class PreprocessingController extends Controller
 			]);
 		}
 
-		return redirect()
-			->back()
-			->with('success', "Data berhasil dibagi: $trainCount training, " . ($total - $trainCount) . " testing.");
+		return redirect()->back()->with('success', 'Data berhasil di-split menjadi training dan testing.');
 	}
 }

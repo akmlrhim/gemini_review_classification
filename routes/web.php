@@ -33,6 +33,7 @@ Route::middleware(['auth'])->group(function () {
 		Route::delete('delete-all', 'deleteAll')->name('preprocessing.delete.all');
 		Route::get('label/edit/{id}', 'editLabel')->name('preprocessing.label.edit')->middleware('hasData');
 		Route::put('label/update/{id}', 'updateLabel')->name('preprocessing.label.update');
+		Route::post('train-data-size', 'trainData')->name('preprocessing.train-data');
 		Route::post('split-data', 'splitData')->name('preprocessing.split-data');
 	});
 

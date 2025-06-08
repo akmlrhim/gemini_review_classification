@@ -65,7 +65,7 @@ class ResultController extends Controller
 			$class_prob[$label] = $count / $total_doc;
 		}
 
-		// Hitung total kata per kelas untuk denominator smoothing
+		// Hitung total kata per kelas untuk menghindari pembagian nol
 		$cond_prob = [];    // P(word|class)
 		$word_counts_by_class = []; // total count kata per kelas
 		$vocab = [];        // untuk menghitung vocabulary size
@@ -228,9 +228,9 @@ class ResultController extends Controller
 			$FN = array_sum($confMatrix[$class]) - $TP;
 			$TN = $totalTest - $TP - $FP - $FN;
 
-			$precision = $TP / ($TP + $FP);
-			$recall =  $TP / ($TP + $FN);
-			$f1 =  2 * ($precision * $recall) / ($precision + $recall);
+			$precision = ($TP + $FP) ? $TP / ($TP + $FP) : 0;
+			$recall = ($TP + $FN) ? $TP / ($TP + $FN) : 0;
+			$f1 = ($precision + $recall) ? 2 * ($precision * $recall) / ($precision + $recall) : 0;
 
 			$metrics[$class] = [
 				'precision' => round($precision * 100, 2),

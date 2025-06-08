@@ -25,6 +25,7 @@ class DashboardController extends Controller
 
 		$label = DB::table('preprocessing')
 			->select('label', DB::raw('count(*) as total'))
+			->where('created_by', Auth::user()->id)
 			->groupBy('label')
 			->orderBy('total', 'desc')
 			->get();
