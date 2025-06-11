@@ -17,6 +17,9 @@
               Label
             </th>
             <th scope="col" class="px-6 py-2 uppercase">
+              Polarity
+            </th>
+            <th scope="col" class="px-6 py-2 uppercase">
               aksi
             </th>
           </tr>
@@ -29,6 +32,9 @@
               </th>
               <th class="px-6 py-1 font-normal text-black dark:text-white">
                 {{ $rows->label }}
+              </th>
+              <th class="px-6 py-1 font-normal text-black dark:text-white">
+                {{ $rows->polarity }}
               </th>
               <th class="px-6 py-1 font-normal text-black dark:text-white">
                 @if ($rows->label)

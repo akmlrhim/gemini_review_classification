@@ -7,10 +7,9 @@
         @foreach ($class_prob as $class => $prob)
           <li class="font-medium text-sm">Probabilitas kelas
             <span class="font-medium text-sm">{{ $class }}</span>:
-            {{ number_format($prob, 4) . '  /  ' . number_format($prob, 4) * 100 . '%' }}
+            {{ number_format($prob, 4) * 100 . '%' }}
           </li>
         @endforeach
-        <li class="font-medium text-sm">Vocab size : {{ $vocab_size }}</li>
       </ul>
     </div>
 

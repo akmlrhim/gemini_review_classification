@@ -20,8 +20,8 @@
       </div>
       <div>
         <button type="button" onclick="window.location.href='{{ route('preprocessing.label') }}'"
-          class="bg-gray-500 text-white px-2 py-1 text-sm rounded-md">kembali</button>
-        <button type="submit" class="bg-blue-500 text-sm text-white px-2 py-1 rounded-md">simpan</button>
+          class="bg-gray-500 text-white px-2 py-1 text-sm rounded-md uppercase">kembali</button>
+        <button type="submit" class="bg-blue-500 text-sm text-white px-2 py-1 rounded-md uppercase">simpan</button>
       </div>
     </form>
   </div>

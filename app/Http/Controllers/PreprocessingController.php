@@ -24,22 +24,6 @@ class PreprocessingController extends Controller
 		));
 	}
 
-	public function search(Request $request)
-	{
-		$title = 'Search';
-		$search = $request->search;
-		$prepro = DB::table('preprocessing')
-			->where('case_folding', 'like', '%' . $search . '%')
-			->where('created_by', Auth::user()->id)
-			->paginate(10)
-			->appends(['search' => $search]);
-
-		return view('preprocessing.index', compact(
-			'title',
-			'prepro',
-		));
-	}
-
 	public function deleteAll()
 	{
 		DB::table('preprocessing')
@@ -61,7 +45,7 @@ class PreprocessingController extends Controller
 	{
 		$title = "Labeling";
 		$label = DB::table('preprocessing')
-			->select('id', 'case_folding', 'label')
+			->select('id', 'case_folding', 'label', 'polarity')
 			->where('created_by', Auth::user()->id)
 			->paginate(20);
 
@@ -87,17 +71,18 @@ class PreprocessingController extends Controller
 		return redirect()->route('preprocessing.label')->with('success', 'Label berhasil diupdate');
 	}
 
-	public function import()
+	public function import(Request $request)
 	{
-		$title = 'Import Data';
-		return view('preprocessing.import', compact('title'));
-	}
-
-	public function storeImport(Request $request)
-	{
-		$request->validate([
+		$validator = Validator::make($request->all(), [
 			'file' => 'required|mimes:csv',
 		]);
+
+		if ($validator->fails()) {
+			return redirect()->back()
+				->withErrors($validator)
+				->withInput()
+				->with('modalImport', true);
+		}
 
 		$file = $request->file('file');
 		$handle = fopen($file->path(), 'r');

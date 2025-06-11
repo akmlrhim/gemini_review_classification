@@ -8,29 +8,38 @@ use Illuminate\Support\Facades\Auth;
 
 class ResultController extends Controller
 {
-	public function calculateBagOfWords()
+	public function trainData()
 	{
-		$title = 'Bag of Words';
+		$title = 'Train Data';
 
 		$data = DB::table('train_data')
-			->select('id', 'lemmatized')
+			->select('id', 'lemmatized', 'label')
 			->where('created_by', Auth::user()->id)
-			->paginate(2)
-			->appends(request()->query());
+			->paginate(20);
 
-		$tf = [];
-
-		foreach ($data as $d) {
-			$tokens = explode(' ', $d->lemmatized);
-			$tf[$d->id] = array_count_values($tokens);
+		if ($data->isEmpty()) {
+			return redirect()->back()->with('error', 'Data latih tidak ditemukan.');
 		}
 
-		return view('result.bag-of-words', compact(
-			'title',
-			'tf',
-			'data'
-		));
+		return view('result.train-data', compact('title', 'data'));
 	}
+
+	public function testData()
+	{
+		$title = 'Test Data';
+
+		$data = DB::table('test_data')
+			->select('id', 'lemmatized', 'label')
+			->where('created_by', Auth::user()->id)
+			->paginate(20);
+
+		if ($data->isEmpty()) {
+			return redirect()->back()->with('error', 'Data uji tidak ditemukan.');
+		}
+
+		return view('result.test-data', compact('title', 'data'));
+	}
+
 
 	public function calculateNaiveBayes()
 	{
@@ -45,15 +54,14 @@ class ResultController extends Controller
 		$labels = [];   // label per dokumen
 		$total_doc = count($data);
 
-		// bangun fitur dan label
 		foreach ($data as $d) {
 			$tokens = explode(' ', $d->lemmatized);
-			$token_counts = array_count_values($tokens); // hitung frekuensi kata
+			$token_counts = array_count_values($tokens);
 			$features[$d->id] = $token_counts;
 			$labels[$d->id] = $d->label;
 		}
 
-		// hitung prior probabilitas kelas P(class)
+		// probabilitas prior P(class)
 		$class_prob = [];
 		foreach ($labels as $label) {
 			if (!isset($class_prob[$label])) {
@@ -89,7 +97,7 @@ class ResultController extends Controller
 
 		$vocab_size = count($vocab);
 
-		// Hitung conditional probabilities
+		// Hitung likehood dengan Laplace smoothing
 		foreach ($cond_prob as $label => $word_counts) {
 			$total_words = $word_counts_by_class[$label];
 			foreach ($word_counts as $word => $count) {
@@ -104,7 +112,6 @@ class ResultController extends Controller
 			'title',
 			'class_prob',
 			'cond_prob',
-			'vocab_size'
 		));
 	}
 
@@ -145,7 +152,7 @@ class ResultController extends Controller
 
 		$totalTrainDocs = count($trainData); //total docs train data
 
-		// hitung probabilitas prior (p|kelas)
+		// hitung probabilitas prior (p|kelas) == likelihood P(class)
 		$classProb = [];
 		foreach ($classCounts as $class => $count) {
 			$classProb[$class] = $count / $totalTrainDocs;
@@ -163,7 +170,7 @@ class ResultController extends Controller
 		$vocabSize = count($vocab); // jumlah kata unik
 
 
-		// hitung probabilitas kondisional P(word|class) dengan menghilangkan kemungkinan nilai nol
+		// hitung probabilitas P(word|class) dengan menghilangkan kemungkinan nilai nol
 		$condProb = [];
 		foreach ($wordFreq as $class => $freqs) {
 			$totalWords = array_sum($freqs);

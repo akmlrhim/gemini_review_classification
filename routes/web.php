@@ -35,14 +35,14 @@ Route::middleware(['auth'])->group(function () {
 		Route::put('label/update/{id}', 'updateLabel')->name('preprocessing.label.update');
 		Route::post('train-data-size', 'trainData')->name('preprocessing.train-data');
 		Route::post('split-data', 'splitData')->name('preprocessing.split-data');
-		Route::get('import-csv', 'import')->name('preprocessing.import');
-		Route::post('import-csv', 'storeImport')->name('preprocessing.import.store');
+		Route::post('import-csv', 'import')->name('preprocessing.import');
 		Route::get('train-data', 'trainData')->name('preprocessing.train-data');
 		Route::get('test-data', 'testData')->name('preprocessing.test-data');
 	});
 
 	Route::prefix('result')->middleware('hasSplit')->controller(ResultController::class)->group(function () {
-		Route::get('bag-of-words', 'calculateBagOfWords')->name('result.bag-of-word');
+		Route::get('train-data', 'trainData')->name('result.train-data');
+		Route::get('test-data', 'testData')->name('result.test-data');
 		Route::get('naive-bayes', 'calculateNaiveBayes')->name('result.naive-bayes');
 		Route::get('confusion-matrix', 'confusionMatrix')->name('result.confusion-matrix');
 	});
