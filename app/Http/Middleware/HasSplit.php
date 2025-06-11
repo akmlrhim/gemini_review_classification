@@ -25,7 +25,7 @@ class HasSplit
 			->where('created_by', Auth::user()->id)
 			->exists();
 
-		if (!$hasTrainData && !$hasTestData) {
+		if (!$hasTrainData || !$hasTestData) {
 			return redirect()->back()->with('error', 'Anda belum melakukan pembagian data.');
 		}
 

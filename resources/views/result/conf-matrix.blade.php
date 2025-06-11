@@ -42,8 +42,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           @foreach ($metrics as $class => $m)
             <div class="bg-white rounded-lg p-4 border border-gray-900">
-              <h3 class="text-sm font-medium mb-2 text-black">{{ ucfirst($class) }}</h3>
-              <ul class="space-y-1 text-black text-sm">
+              <h3 class="text-sm font-extrabold mb-2 text-black">{{ ucfirst($class) }}</h3>
+              <ul class="space-y-1 font-bold text-black text-sm">
                 <li>presisi: {{ $m['precision'] }} %</li>
                 <li>recall : {{ $m['recall'] }} %</li>
                 <li>f1 score :{{ $m['f1_score'] }} %</li>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Preprocessing;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -86,10 +87,117 @@ class PreprocessingController extends Controller
 		return redirect()->route('preprocessing.label')->with('success', 'Label berhasil diupdate');
 	}
 
+	public function import()
+	{
+		$title = 'Import Data';
+		return view('preprocessing.import', compact('title'));
+	}
+
+	public function storeImport(Request $request)
+	{
+		$request->validate([
+			'file' => 'required|mimes:csv',
+		]);
+
+		$file = $request->file('file');
+		$handle = fopen($file->path(), 'r');
+
+		fgetcsv($handle);
+		$chunksize = 25;
+
+		while (!feof($handle)) {
+			$chunkdata = [];
+
+			for ($i = 0; $i < $chunksize; $i++) {
+				$data = fgetcsv($handle);
+
+				if ($data === false) {
+					break;
+				}
+
+				$chunkdata[] = $data;
+			}
+
+			$this->getChunkData($chunkdata);
+		}
+		fclose($handle);
+
+		return redirect()->route('preprocessing.index')->with('success', 'Import successfully');
+	}
+
+	public function getChunkData($chunkdata)
+	{
+		foreach ($chunkdata as $column) {
+			$case_folding = $column[0];
+			$tokenize = $column[1];
+			$stopword = $column[2];
+			$lemmatized = $column[3];
+			$polarity = $column[4];
+			$label = $column[5];
+
+			$preprocessing = new Preprocessing();
+			$preprocessing->case_folding = $case_folding;
+			$preprocessing->tokenize = $tokenize;
+			$preprocessing->stopword = $stopword;
+			$preprocessing->lemmatized = $lemmatized;
+			$preprocessing->polarity = $polarity;
+			$preprocessing->label = $label;
+			$preprocessing->created_by = Auth::user()->id;
+			$preprocessing->save();
+		}
+	}
+
+
+	public function trainData()
+	{
+		$title = 'Train Data';
+		$trainData = DB::table('train_data')
+			->select('id', 'lemmatized', 'label')
+			->where('created_by', Auth::user()->id)
+			->paginate(30);
+
+		dd($trainData);
+		return view('preprocessing.train_data.index', compact(
+			'title',
+			'trainData',
+		));
+	}
+
+	public function storeTrainData(Request $request)
+	{
+		$request->validate([
+			'lemmatized' => 'required|string',
+			'label' => 'required|string',
+		]);
+
+		DB::table('train_data')->insert([
+			'lemmatized' => $request->lemmatized,
+			'label' => $request->label,
+			'created_by' => Auth::user()->id,
+		]);
+
+		return redirect()->route('preprocessing.train-data')->with('success', 'Data berhasil ditambahkan');
+	}
+
+	public function testData()
+	{
+		$title = 'Test Data';
+		$testData = DB::table('test_data')
+			->select('id', 'lemmatized', 'label')
+			->where('created_by', Auth::user()->id)
+			->paginate(30);
+
+		dd($testData);
+		return view('preprocessing.test_data.index', compact(
+			'title',
+			'testData',
+		));
+	}
+
 	public function splitData(Request $request)
 	{
 		$validator = Validator::make($request->all(), [
-			'train_data' => 'required|numeric|min:1|max:90',
+			'train_data' => 'required|numeric|min:0|max:100',
 		]);
 
 		if ($validator->fails()) {
@@ -110,8 +218,7 @@ class PreprocessingController extends Controller
 			return redirect()->back()->with('error', 'Jumlah data kurang dari 2, tidak bisa dibagi.');
 		}
 
-		// Acak data
-		srand(10);
+		srand(42);
 		shuffle($preprocessedData);
 
 		$total = count($preprocessedData);
@@ -127,19 +234,14 @@ class PreprocessingController extends Controller
 				'lemmatized' => $item->lemmatized,
 				'label' => $item->label,
 				'created_by' => $item->created_by,
-				'created_at' => now(),
-				'updated_at' => now(),
 			]);
 		}
 
-		// Masukkan data testing
 		foreach ($testData as $item) {
 			DB::table('test_data')->insert([
 				'lemmatized' => $item->lemmatized,
 				'label' => $item->label,
 				'created_by' => $item->created_by,
-				'created_at' => now(),
-				'updated_at' => now(),
 			]);
 		}
 

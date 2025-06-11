@@ -4,7 +4,7 @@
   <x-alert></x-alert>
 
   <div class="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6 mb-2 border border-gray-200">
-    <form action="{{ route('import.store') }}" method="POST" enctype="multipart/form-data" id="importForm">
+    <form action="{{ route('preprocessing.import.store') }}" method="POST" enctype="multipart/form-data" id="importForm">
       @csrf
 
       <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file">Upload file (csv)</label>

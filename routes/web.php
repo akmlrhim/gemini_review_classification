@@ -35,6 +35,10 @@ Route::middleware(['auth'])->group(function () {
 		Route::put('label/update/{id}', 'updateLabel')->name('preprocessing.label.update');
 		Route::post('train-data-size', 'trainData')->name('preprocessing.train-data');
 		Route::post('split-data', 'splitData')->name('preprocessing.split-data');
+		Route::get('import-csv', 'import')->name('preprocessing.import');
+		Route::post('import-csv', 'storeImport')->name('preprocessing.import.store');
+		Route::get('train-data', 'trainData')->name('preprocessing.train-data');
+		Route::get('test-data', 'testData')->name('preprocessing.test-data');
 	});
 
 	Route::prefix('result')->middleware('hasSplit')->controller(ResultController::class)->group(function () {
@@ -43,8 +47,7 @@ Route::middleware(['auth'])->group(function () {
 		Route::get('confusion-matrix', 'confusionMatrix')->name('result.confusion-matrix');
 	});
 
-	Route::get('import-csv', [ImportController::class, 'index'])->name('import.index');
-	Route::post('import-csv', [ImportController::class, 'store'])->name('import.store');
+
 
 	Route::prefix('my-profile')->group(function () {
 		Route::get('/', [ProfileController::class, 'index'])->name('my-profile.index');

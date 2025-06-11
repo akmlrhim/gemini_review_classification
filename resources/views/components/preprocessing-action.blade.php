@@ -25,7 +25,7 @@
       SPLIT DATA
     </button>
 
-    <button type="button" onclick="window.location.href='{{ route('import.index') }}'"
+    <button type="button" onclick="window.location.href='{{ route('preprocessing.import') }}'"
       class="px-4 py-2 text-xs font-bold text-green-700 bg-white border border-gray-200 rounded hover:bg-gray-100 uppercase">
       IMPORT
     </button>

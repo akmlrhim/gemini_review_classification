@@ -127,10 +127,12 @@ class ResultController extends Controller
 			return redirect()->back()->with('error', 'Data latih atau uji kosong.');
 		}
 
-		// TRAINING DATA
-		$classCounts = [];
-		$wordFreq = [];
+		// naive bayes 
+		$classCounts = []; //jumlah dokumen per kelas
+		$wordFreq = []; // frekuensi kata per kelas
 
+
+		//hitung frekurensi kata per kelas dari data training
 		foreach ($trainData as $item) {
 			$label = $item->label;
 			$classCounts[$label] = ($classCounts[$label] ?? 0) + 1;
@@ -141,17 +143,16 @@ class ResultController extends Controller
 			}
 		}
 
-		$totalTrainDocs = count($trainData);
+		$totalTrainDocs = count($trainData); //total docs train data
 
-		// P(Label)
+		// hitung probabilitas prior (p|kelas)
 		$classProb = [];
 		foreach ($classCounts as $class => $count) {
 			$classProb[$class] = $count / $totalTrainDocs;
 		}
 
-		// Vocab
+		// buat daftar kata unik dari semua kelas
 		$vocab = [];
-
 		foreach ($wordFreq as $label => $words) {
 			foreach (array_keys($words) as $word) {
 				$vocab[$word] = true;
@@ -159,36 +160,40 @@ class ResultController extends Controller
 		}
 
 		$vocab = array_keys($vocab);
-		$vocabSize = count($vocab);
+		$vocabSize = count($vocab); // jumlah kata unik
 
-		// P(Kata | Label)
+
+		// hitung probabilitas kondisional P(word|class) dengan menghilangkan kemungkinan nilai nol
 		$condProb = [];
 		foreach ($wordFreq as $class => $freqs) {
 			$totalWords = array_sum($freqs);
 			foreach ($vocab as $word) {
 				$count = $freqs[$word] ?? 0;
-				$condProb[$class][$word] = ($count + 1) / ($totalWords + $vocabSize);
+				$condProb[$class][$word] = ($count + 1) / ($totalWords + $vocabSize); // laplace smoothing
 			}
 		}
 
 
-		// LABEL PREDIKSI 
-		$labelsActual = [];
-		$labelsPredicted = [];
+		// prediksi label dengan model (data training)
+		$labelsActual = []; // simpan label asli dari datatest
+		$labelsPredicted = []; // simpan hasil prediksi label model
 
 		foreach ($testData as $item) {
 			$id = $item->id;
-			$labelsActual[$id] = $item->label;
+			$labelsActual[$id] = $item->label; // label asli
 
 			$tokens = explode(' ', $item->lemmatized);
-			$termFreq = array_count_values($tokens);
+			$termFreq = array_count_values($tokens); // hitung frekuensi kata dalam dokumen
 
 			$scores = [];
+
+			//hitung skor log probabilitas untuk setiap kelas
 			foreach ($classProb as $class => $prior) {
-				$score = log($prior);
+				$score = log($prior); // log(P(class))
 				$totalWordsInClass = array_sum($wordFreq[$class] ?? []);
 
 				foreach ($termFreq as $word => $count) {
+					// probabilitas sudah dihitung dengan smoothing, untuk menghindari nilai nol
 					$prob = $condProb[$class][$word] ?? (1 / ($totalWordsInClass + $vocabSize));
 					$score += $count * log($prob); // log(P(word|class))^count
 				}
@@ -196,15 +201,19 @@ class ResultController extends Controller
 				$scores[$class] = $score;
 			}
 
+			// ambil kelas dengan skor tertinggi sebagai prediksi
 			$labelsPredicted[$id] = array_keys($scores, max($scores))[0];
 		}
 
 		// CONFUSION MATRIX 
+
+		//ambil semua kelas unik dari label asli dan prediksi
 		$classes = array_values(array_unique(array_merge(
 			array_values($labelsActual),
 			array_values($labelsPredicted)
 		)));
 
+		//init confusion matrix
 		$confMatrix = [];
 		foreach ($classes as $actual) {
 			$confMatrix[$actual] = array_fill_keys($classes, 0);
@@ -215,9 +224,7 @@ class ResultController extends Controller
 			$confMatrix[$actual][$predicted]++;
 		}
 
-		// =====================
-		// METRIK
-		// =====================
+		//metrik
 		$metrics = [];
 		$totalTest = count($testData);
 		$correct = 0;
