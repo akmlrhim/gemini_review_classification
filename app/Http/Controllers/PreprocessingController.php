@@ -45,7 +45,7 @@ class PreprocessingController extends Controller
 	{
 		$title = "Labeling";
 		$label = DB::table('preprocessing')
-			->select('id', 'case_folding', 'label', 'polarity')
+			->select('id', 'case_folding', 'label')
 			->where('created_by', Auth::user()->id)
 			->paginate(20);
 
@@ -117,15 +117,13 @@ class PreprocessingController extends Controller
 			$tokenize = $column[1];
 			$stopword = $column[2];
 			$lemmatized = $column[3];
-			$polarity = $column[4];
-			$label = $column[5];
+			$label = $column[4];
 
 			$preprocessing = new Preprocessing();
 			$preprocessing->case_folding = $case_folding;
 			$preprocessing->tokenize = $tokenize;
 			$preprocessing->stopword = $stopword;
 			$preprocessing->lemmatized = $lemmatized;
-			$preprocessing->polarity = $polarity;
 			$preprocessing->label = $label;
 			$preprocessing->created_by = Auth::user()->id;
 			$preprocessing->save();

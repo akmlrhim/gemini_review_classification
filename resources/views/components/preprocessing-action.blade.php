@@ -65,7 +65,7 @@
               Train data</label>
             <input type="number" name="train_data" id="train_data" value="{{ old('train_data') }}"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-              autocomplete="" />
+              placeholder="Masukkan persentase train data" />
             @error('train_data')
               <small class="text-red-500 text-sm"> {{ $message }}</small>
             @enderror

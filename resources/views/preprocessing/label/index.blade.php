@@ -8,16 +8,13 @@
   @else
     <div class="relative overflow-x-auto rounded-md">
       <table class="w-full text-left rtl:text-right text-black dark:text-gray-400">
-        <thead class="text-sm text-white bg-gray-900 dark:bg-gray-700 dark:text-gray-400">
+        <thead class="text-sm text-black bg-white dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" class="px-6 py-2 uppercase">
               Content
             </th>
             <th scope="col" class="px-6 py-2 uppercase">
               Label
-            </th>
-            <th scope="col" class="px-6 py-2 uppercase">
-              Polarity
             </th>
             <th scope="col" class="px-6 py-2 uppercase">
               aksi
@@ -33,9 +30,7 @@
               <th class="px-6 py-1 font-normal text-black dark:text-white">
                 {{ $rows->label }}
               </th>
-              <th class="px-6 py-1 font-normal text-black dark:text-white">
-                {{ $rows->polarity }}
-              </th>
+
               <th class="px-6 py-1 font-normal text-black dark:text-white">
                 @if ($rows->label)
                   <a href="{{ route('preprocessing.label.edit', $rows->id) }}"

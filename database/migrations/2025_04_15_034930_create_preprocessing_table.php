@@ -19,7 +19,6 @@ return new class extends Migration
 			$table->text('stopword');
 			$table->text('lemmatized');
 			$table->string('label', 16);
-			$table->float('polarity');
 			$table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
 			$table->timestamps();
 		});

@@ -50,18 +50,25 @@ class ResultController extends Controller
 			->where('created_by', Auth::user()->id)
 			->get();
 
-		$features = []; // fitur BoW per dokumen
-		$labels = [];   // label per dokumen
+		$features = [];
+		$labels = [];
 		$total_doc = count($data);
 
 		foreach ($data as $d) {
-			$tokens = explode(' ', $d->lemmatized);
+			$cleanJson = str_replace("'", '"', $d->lemmatized);
+
+			$tokens = json_decode($cleanJson, true);
+
+			if (!is_array($tokens)) {
+				$tokens = [];
+			}
+
 			$token_counts = array_count_values($tokens);
 			$features[$d->id] = $token_counts;
 			$labels[$d->id] = $d->label;
 		}
 
-		// probabilitas prior P(class)
+		// Probabilitas prior P(class)
 		$class_prob = [];
 		foreach ($labels as $label) {
 			if (!isset($class_prob[$label])) {
@@ -73,31 +80,35 @@ class ResultController extends Controller
 			$class_prob[$label] = $count / $total_doc;
 		}
 
-		// Hitung total kata per kelas untuk menghindari pembagian nol
-		$cond_prob = [];    // P(word|class)
-		$word_counts_by_class = []; // total count kata per kelas
-		$vocab = [];        // untuk menghitung vocabulary size
+		// Hitung jumlah kata per kelas dan vocab
+		$cond_prob = [];                // P(word|class)
+		$raw_counts = [];              // Count(word|class)
+		$word_counts_by_class = [];    // Total kata per kelas
+		$vocab = [];
 
-		// Hitung jumlah kata per kelas dan kumpulkan vocab
 		foreach ($features as $doc_id => $terms) {
 			$label = $labels[$doc_id];
-			if (!isset($word_counts_by_class[$label])) {
-				$word_counts_by_class[$label] = 0;
-			}
-			foreach ($terms as $word => $count) {
-				if (!isset($cond_prob[$label][$word])) {
-					$cond_prob[$label][$word] = 0;
-				}
-				$cond_prob[$label][$word] += $count;
-				$word_counts_by_class[$label] += $count;
 
+			$word_counts_by_class[$label] = $word_counts_by_class[$label] ?? 0;
+			$cond_prob[$label] = $cond_prob[$label] ?? [];
+			$raw_counts[$label] = $raw_counts[$label] ?? [];
+
+			foreach ($terms as $word => $count) {
+				$raw_counts[$label][$word] = ($raw_counts[$label][$word] ?? 0) + $count;
+
+				$cond_prob[$label][$word] = ($cond_prob[$label][$word] ?? 0) + $count;
+
+				$word_counts_by_class[$label] += $count;
 				$vocab[$word] = true;
 			}
 		}
 
 		$vocab_size = count($vocab);
 
-		// Hitung likehood dengan Laplace smoothing
+		// Hitung probabilitas kondisi dengan Laplace smoothing
+		//peluang kemunculan kata dalam kelas
+		$vocab_size = count($vocab);
+
 		foreach ($cond_prob as $label => $word_counts) {
 			$total_words = $word_counts_by_class[$label];
 			foreach ($word_counts as $word => $count) {
@@ -105,16 +116,16 @@ class ResultController extends Controller
 			}
 		}
 
-		//jika ada kata yang tidak muncul di kelas tertentu, 
-		//nilai smoothing (biasanya 1 / (total_words + vocab_size))
 
 		return view('result.naive-bayes', compact(
 			'title',
 			'class_prob',
 			'cond_prob',
+			'vocab_size',
+			'word_counts_by_class',
+			'raw_counts'
 		));
 	}
-
 
 	public function confusionMatrix(Request $request)
 	{
@@ -144,7 +155,13 @@ class ResultController extends Controller
 			$label = $item->label;
 			$classCounts[$label] = ($classCounts[$label] ?? 0) + 1;
 
-			$tokens = explode(' ', $item->lemmatized);
+			$cleanJson = str_replace("'", '"', $item->lemmatized);
+
+			$tokens = json_decode($cleanJson, true);
+			if (!is_array($tokens)) {
+				$tokens = [];
+			}
+
 			foreach ($tokens as $word) {
 				$wordFreq[$label][$word] = ($wordFreq[$label][$word] ?? 0) + 1;
 			}
@@ -152,7 +169,7 @@ class ResultController extends Controller
 
 		$totalTrainDocs = count($trainData); //total docs train data
 
-		// hitung probabilitas prior (p|kelas) == likelihood P(class)
+		// hitung probabilitas prior (p|kelas)
 		$classProb = [];
 		foreach ($classCounts as $class => $count) {
 			$classProb[$class] = $count / $totalTrainDocs;
@@ -180,16 +197,21 @@ class ResultController extends Controller
 			}
 		}
 
-
 		// prediksi label dengan model (data training)
 		$labelsActual = []; // simpan label asli dari datatest
 		$labelsPredicted = []; // simpan hasil prediksi label model
 
 		foreach ($testData as $item) {
 			$id = $item->id;
-			$labelsActual[$id] = $item->label; // label asli
+			$labelsActual[$id] = $item->label;
 
-			$tokens = explode(' ', $item->lemmatized);
+			$cleanJson = str_replace("'", '"', $item->lemmatized);
+
+			$tokens = json_decode($cleanJson, true);
+
+			if (!is_array($tokens)) {
+				$tokens = [];
+			}
 			$termFreq = array_count_values($tokens); // hitung frekuensi kata dalam dokumen
 
 			$scores = [];

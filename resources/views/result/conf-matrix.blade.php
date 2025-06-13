@@ -19,14 +19,14 @@
               <tr class="bg-gray-200">
                 <th class="border px-3 py-1">Aktual | prediksi</th>
                 @foreach ($classes as $pred)
-                  <th class="border px-3 py-1">{{ ucfirst($pred) }}</th>
+                  <th class="border px-3 py-1">{{ $pred }}</th>
                 @endforeach
               </tr>
             </thead>
             <tbody>
               @foreach ($classes as $actual)
                 <tr>
-                  <th class="border px-3 py-1 bg-gray-100">{{ ucfirst($actual) }}</th>
+                  <th class="border px-3 py-1 bg-gray-100">{{ $actual }}</th>
                   @foreach ($classes as $pred)
                     <td class="border px-3 py-1">{{ $confMatrix[$actual][$pred] }}</td>
                   @endforeach
@@ -42,7 +42,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           @foreach ($metrics as $class => $m)
             <div class="bg-white rounded-lg p-4 border border-gray-900">
-              <h3 class="text-sm font-extrabold mb-2 text-black">{{ ucfirst($class) }}</h3>
+              <h3 class="text-sm font-extrabold mb-2 text-black">{{ $class }}</h3>
               <ul class="space-y-1 capitalize text-black text-sm">
                 <li>presisi : {{ $m['precision'] }} %</li>
                 <li>recall : {{ $m['recall'] }} %</li>
