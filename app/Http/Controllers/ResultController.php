@@ -235,7 +235,6 @@ class ResultController extends Controller
 		}
 
 		// CONFUSION MATRIX 
-
 		//ambil semua kelas unik dari label asli dan prediksi
 		$classes = array_values(array_unique(array_merge(
 			array_values($labelsActual),

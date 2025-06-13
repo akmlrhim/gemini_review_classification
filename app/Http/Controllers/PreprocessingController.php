@@ -81,7 +81,7 @@ class PreprocessingController extends Controller
 			return redirect()->back()
 				->withErrors($validator)
 				->withInput()
-				->with('modalImport', true);
+				->with('error', 'Terjadi kesalahan !');
 		}
 
 		$file = $request->file('file');
@@ -146,22 +146,6 @@ class PreprocessingController extends Controller
 		));
 	}
 
-	public function storeTrainData(Request $request)
-	{
-		$request->validate([
-			'lemmatized' => 'required|string',
-			'label' => 'required|string',
-		]);
-
-		DB::table('train_data')->insert([
-			'lemmatized' => $request->lemmatized,
-			'label' => $request->label,
-			'created_by' => Auth::user()->id,
-		]);
-
-		return redirect()->route('preprocessing.train-data')->with('success', 'Data berhasil ditambahkan');
-	}
-
 	public function testData()
 	{
 		$title = 'Test Data';
@@ -187,7 +171,7 @@ class PreprocessingController extends Controller
 			return redirect()->back()
 				->withErrors($validator)
 				->withInput()
-				->with('showModal', true);
+				->with('error', 'Terjadi kesalahan !');
 		}
 
 		$trainDataRatio = $request->train_data / 100;
@@ -228,6 +212,6 @@ class PreprocessingController extends Controller
 			]);
 		}
 
-		return redirect()->back()->with('success', 'Data berhasil di-split menjadi training dan testing.');
+		return redirect()->route('result.confusion-matrix')->with('success', 'Data berhasil di-split menjadi training dan testing.');
 	}
 }
