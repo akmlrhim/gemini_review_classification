@@ -30,7 +30,6 @@
       </div>
     </div>
   </div>
-
   @push('script')
     <script type="module">
       const ctx = document.getElementById('labelChart').getContext('2d');

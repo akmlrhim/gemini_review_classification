@@ -17,11 +17,22 @@ class ResultController extends Controller
 			->where('created_by', Auth::user()->id)
 			->paginate(20);
 
-		if ($data->isEmpty()) {
-			return redirect()->back()->with('error', 'Data latih tidak ditemukan.');
-		}
+		$positifCount = DB::table('train_data')
+			->where('created_by', Auth::user()->id)
+			->where('label', 'positif')
+			->count();
 
-		return view('result.train-data', compact('title', 'data'));
+		$negatifCount = DB::table('train_data')
+			->where('created_by', Auth::user()->id)
+			->where('label', 'negatif')
+			->count();
+
+		return view('result.train-data', compact(
+			'title',
+			'data',
+			'positifCount',
+			'negatifCount'
+		));
 	}
 
 	public function testData()
@@ -116,7 +127,6 @@ class ResultController extends Controller
 			}
 		}
 
-
 		return view('result.naive-bayes', compact(
 			'title',
 			'class_prob',
@@ -148,7 +158,6 @@ class ResultController extends Controller
 		// naive bayes 
 		$classCounts = []; //jumlah dokumen per kelas
 		$wordFreq = []; // frekuensi kata per kelas
-
 
 		//hitung frekurensi kata per kelas dari data training
 		foreach ($trainData as $item) {

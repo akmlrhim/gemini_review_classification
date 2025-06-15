@@ -4,6 +4,14 @@
   @if ($data->isEmpty())
     <x-empty-data></x-empty-data>
   @else
+    <div class="bg-blue-100 border text-blue-900 text-sm rounded-lg p-2 mb-4">
+      <ul class="list-disc pl-5 space-y-1">
+        <li>Jumlah data dengan kelas positif : {{ $positifCount }}</li>
+        <li>Jumlah data dengan kelas negatif : {{ $negatifCount }}</li>
+        <li>Jumlah data : {{ $positifCount + $negatifCount }}</li>
+      </ul>
+    </div>
+
     <div class="relative overflow-x-auto rounded-md">
       <table class="w-full text-left text-black dark:text-gray-300 border-b dark:border-gray-700">
         <thead class="text-sm text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -23,10 +31,10 @@
           @foreach ($data as $index => $row)
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 text-sm">
               <td class="px-6 py-1 text-sm text-gray-900 dark:text-gray-100">
-                {{ $index + 1 }}
+                {{ ($data->currentPage() - 1) * $data->perPage() + $index + 1 }}
               </td>
               <td class="px-6 py-1 text-sm text-gray-900 dark:text-gray-100">
-                {{ str_replace([',', '[', ']', "'"], [' ', '', '', ''], $row->lemmatized) }}
+                {{ $row->lemmatized }}
               </td>
               <td class="px-6 py-1 text-sm text-gray-900 dark:text-gray-100">
                 {{ $row->label }}

@@ -72,8 +72,6 @@ class AuthController extends Controller
 			'password' => Hash::make($request->password),
 			'role' => 'user',
 			'status' => 'inactive',
-			'created_at' => now(),
-			'updated_at' => now()
 		]);
 
 		return redirect()->route('login')->with('success', 'Registrasi berhasil, silakan login!');
