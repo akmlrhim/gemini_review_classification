@@ -26,7 +26,7 @@
     <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 md:col-span-3">
       <h2 class="text-md font-medium text-gray-700 mb-4 text-center">Perbandingan jumlah label</h2>
       <div class="relative overflow-x-auto rounded-md">
-        <canvas id="labelChart" class="w-[300px] h-[300px] mx-auto"></canvas>
+        <canvas id="labelChart" class="w-[500px] h-[300px] mx-auto"></canvas>
       </div>
     </div>
   </div>

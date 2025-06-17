@@ -1,42 +1,36 @@
-<div class="flex items-center justify-center gap-3 max-w-xl mx-auto p-3">
-  <div class="inline-flex rounded-md shadow-xs" role="group">
+<div class="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-xl mx-auto p-3">
+  <div class="w-full sm:w-auto">
     <form action="{{ route('preprocessing.delete.all') }}" method="POST" onsubmit="return confirm('Apakah anda yakin?');">
       @csrf
       @method('DELETE')
       <button type="submit"
-        class="px-4 py-2 text-sm font-bold text-red-500 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 uppercase">
-        delete all
+        class="w-full sm:w-auto px-4 py-2 text-sm font-bold text-red-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 uppercase">
+        Delete All
       </button>
     </form>
+  </div>
 
-    {{-- @if (Auth::user()->role == 'admin')
-      <form action="{{ route('preprocessing.split-data') }}" method="POST"
-        onsubmit="return confirm('Yakin ingin membagi data training dan testing?');">
-        @csrf
-        <button type="submit" data-modal-target="split-modal" data-modal-toggle="split-modal"
-          class="px-4 py-2 text-sm font-bold text-green-700 bg-white border border-gray-200 rounded hover:bg-gray-100 uppercase">
-          SPLIT DATA
-        </button>
-      </form>
-    @endif --}}
-
+  <div class="w-full sm:w-auto">
     <button type="button" data-modal-target="split-modal" data-modal-toggle="split-modal"
-      class="px-4 py-2 text-sm font-bold text-red-700 bg-white border border-gray-200 rounded hover:bg-gray-100 uppercase">
-      SPLIT DATA
+      class="w-full sm:w-auto px-4 py-2 text-sm font-bold text-red-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 uppercase">
+      Split Data
     </button>
+  </div>
 
+  <div class="w-full sm:w-auto">
     <button type="button" data-modal-target="import-modal" data-modal-toggle="import-modal"
-      class="px-4 py-2 text-sm font-bold text-green-700 bg-white border border-gray-200 rounded hover:bg-gray-100 uppercase">
-      IMPORT
+      class="w-full sm:w-auto px-4 py-2 text-sm font-bold text-green-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 uppercase">
+      Import
     </button>
+  </div>
 
+  <div class="w-full sm:w-auto">
     <button type="button" onclick="window.location.href='{{ route('preprocessing.index') }}'"
-      class="px-4 py-2 text-sm font-bold text-blue-700 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 uppercase">
-      back
+      class="w-full sm:w-auto px-4 py-2 text-sm font-bold text-blue-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 uppercase">
+      Back
     </button>
   </div>
 </div>
-
 
 {{-- modal split  --}}
 <div id="split-modal" tabindex="-1" aria-hidden="true"
@@ -81,7 +75,7 @@
     </div>
   </div>
 </div>
-
+{{-- end split modal --}}
 
 
 {{-- import modal  --}}

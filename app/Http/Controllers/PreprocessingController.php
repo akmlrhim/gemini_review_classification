@@ -41,7 +41,7 @@ class PreprocessingController extends Controller
 		return redirect()->route('preprocessing.index')->with('success', 'Data berhasil dihapus');
 	}
 
-	public function labeling()
+	public function label()
 	{
 		$title = "Labeling";
 		$label = DB::table('preprocessing')
@@ -130,37 +130,6 @@ class PreprocessingController extends Controller
 		}
 	}
 
-
-	public function trainData()
-	{
-		$title = 'Train Data';
-		$trainData = DB::table('train_data')
-			->select('id', 'lemmatized', 'label')
-			->where('created_by', Auth::user()->id)
-			->paginate(30);
-
-		dd($trainData);
-		return view('preprocessing.train_data.index', compact(
-			'title',
-			'trainData',
-		));
-	}
-
-	public function testData()
-	{
-		$title = 'Test Data';
-		$testData = DB::table('test_data')
-			->select('id', 'lemmatized', 'label')
-			->where('created_by', Auth::user()->id)
-			->paginate(30);
-
-		dd($testData);
-		return view('preprocessing.test_data.index', compact(
-			'title',
-			'testData',
-		));
-	}
-
 	public function splitData(Request $request)
 	{
 		$validator = Validator::make($request->all(), [
@@ -185,7 +154,7 @@ class PreprocessingController extends Controller
 			return redirect()->back()->with('error', 'Jumlah data kurang dari 2, tidak bisa dibagi.');
 		}
 
-		srand(123); // 1, 10, 42, 123, 1000
+		srand(42); // 1, 10, 42, 123, 1000
 		shuffle($preprocessedData);
 
 		$total = count($preprocessedData);
@@ -212,6 +181,6 @@ class PreprocessingController extends Controller
 			]);
 		}
 
-		return redirect()->route('result.confusion-matrix')->with('success', 'Data berhasil di-split menjadi training dan testing.');
+		return redirect()->back()->with('success', 'Data berhasil di-split menjadi training dan testing.');
 	}
 }

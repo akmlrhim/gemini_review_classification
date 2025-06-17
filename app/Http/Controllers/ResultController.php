@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ResultController extends Controller
 {
@@ -51,8 +52,7 @@ class ResultController extends Controller
 		return view('result.test-data', compact('title', 'data'));
 	}
 
-
-	public function calculateNaiveBayes()
+	public function naiveBayes()
 	{
 		$title = 'Naive Bayes';
 
@@ -95,7 +95,7 @@ class ResultController extends Controller
 		$cond_prob = [];                // P(word|class)
 		$raw_counts = [];              // Count(word|class)
 		$word_counts_by_class = [];    // Total kata per kelas
-		$vocab = [];
+		$vocab = []; // total kata unik
 
 		foreach ($features as $doc_id => $terms) {
 			$label = $labels[$doc_id];
@@ -127,6 +127,22 @@ class ResultController extends Controller
 			}
 		}
 
+		// simpan hasil pelatihan 
+		// $modelData = [
+		// 	'class_prob' => $class_prob,
+		// 	'cond_prob' => $cond_prob,
+		// 	'vocab_size' => $vocab_size,
+		// 	'word_counts_by_class' => $word_counts_by_class,
+		// 	'raw_counts' => $raw_counts,
+		// 	'created_by' => Auth::user()->id,
+		// 	'created_at' => now()
+		// ];
+
+		// $jsonData = json_encode($modelData, JSON_PRETTY_PRINT);
+
+		// $filename = 'naive-bayes/user_' . Auth::user()->id . '.json';
+		// Storage::disk('public')->put($filename, $jsonData);
+
 		return view('result.naive-bayes', compact(
 			'title',
 			'class_prob',
@@ -136,6 +152,7 @@ class ResultController extends Controller
 			'raw_counts'
 		));
 	}
+
 
 	public function confusionMatrix(Request $request)
 	{
@@ -294,5 +311,12 @@ class ResultController extends Controller
 			'accuracy',
 			'title'
 		));
+	}
+
+	public function predictLabel(Request $request)
+	{
+		$request->validate([
+			'sentence' => 'required'
+		]);
 	}
 }

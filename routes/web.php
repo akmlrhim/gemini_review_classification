@@ -28,12 +28,10 @@ Route::middleware(['auth'])->group(function () {
 
 	Route::prefix('preprocessing')->controller(PreprocessingController::class)->group(function () {
 		Route::get('/', 'index')->name('preprocessing.index');
-		Route::get('label', 'labeling')->name('preprocessing.label');
-		Route::get('search', 'search')->name('preprocessing.search');
+		Route::get('label', 'label')->name('preprocessing.label');
 		Route::delete('delete-all', 'deleteAll')->name('preprocessing.delete.all');
 		Route::get('label/edit/{id}', 'editLabel')->name('preprocessing.label.edit')->middleware('hasData');
 		Route::put('label/update/{id}', 'updateLabel')->name('preprocessing.label.update');
-		Route::post('train-data-size', 'trainData')->name('preprocessing.train-data');
 		Route::post('split-data', 'splitData')->name('preprocessing.split-data');
 		Route::post('import-csv', 'import')->name('preprocessing.import');
 		Route::get('train-data', 'trainData')->name('preprocessing.train-data');
@@ -43,7 +41,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::prefix('result')->middleware('hasSplit')->controller(ResultController::class)->group(function () {
 		Route::get('train-data', 'trainData')->name('result.train-data');
 		Route::get('test-data', 'testData')->name('result.test-data');
-		Route::get('naive-bayes', 'calculateNaiveBayes')->name('result.naive-bayes');
+		Route::get('naive-bayes', 'naiveBayes')->name('result.naive-bayes');
 		Route::get('confusion-matrix', 'confusionMatrix')->name('result.confusion-matrix');
 	});
 
