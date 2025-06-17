@@ -6,13 +6,6 @@
   @if (empty($confMatrix))
     <x-empty-data></x-empty-data>
   @else
-    <div class="mb-4 flex justify-start md:ml-44 space-x-3">
-      <button type="button" data-modal-target="split-modal" data-modal-toggle="split-modal"
-        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-1 uppercase">
-        split data
-      </button>
-    </div>
-
     <div class="max-w-6xl mx-auto py-4 bg-white shadow-md rounded-lg p-6 mb-4 border border-gray-200">
       <h2 class="text-md font-medium mb-6 text-green-800">Akurasi :
         <span

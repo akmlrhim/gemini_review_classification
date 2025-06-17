@@ -154,7 +154,7 @@ class PreprocessingController extends Controller
 			return redirect()->back()->with('error', 'Jumlah data kurang dari 2, tidak bisa dibagi.');
 		}
 
-		srand(42); // 1, 10, 42, 123, 1000
+		srand(123); // 1, 10, 42, 123, 1000
 		shuffle($preprocessedData);
 
 		$total = count($preprocessedData);
