@@ -53,9 +53,12 @@
         </li>
 
         @if ($show)
+          <x-nav-link href="https://sentiment-analysis-eta-drab.vercel.app">Predict
+            Review</x-nav-link>
           <x-nav-link href="{{ route('result.naive-bayes') }}">Naive Bayes Clsf.</x-nav-link>
           <x-nav-link href="{{ route('result.confusion-matrix') }}">Conf. Matrix</x-nav-link>
         @endif
+
 
         <li>
           <button id="user" data-dropdown-toggle="userDropdown"

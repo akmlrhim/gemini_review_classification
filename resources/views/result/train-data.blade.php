@@ -4,14 +4,6 @@
   @if ($data->isEmpty())
     <x-empty-data></x-empty-data>
   @else
-    <div class="bg-blue-100 border text-blue-900 text-sm rounded-lg p-2 mb-4">
-      <ul class="list-disc pl-5 space-y-1">
-        <li>Jumlah data dengan kelas positif : {{ $positifCount }}</li>
-        <li>Jumlah data dengan kelas negatif : {{ $negatifCount }}</li>
-        <li>Jumlah data : {{ $positifCount + $negatifCount }}</li>
-      </ul>
-    </div>
-
     <div class="relative overflow-x-auto rounded-md">
       <table class="w-full text-left text-black dark:text-gray-300 border-b dark:border-gray-700">
         <thead class="text-sm text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

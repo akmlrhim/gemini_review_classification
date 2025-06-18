@@ -128,20 +128,23 @@ class ResultController extends Controller
 		}
 
 		// simpan hasil pelatihan 
-		// $modelData = [
-		// 	'class_prob' => $class_prob,
-		// 	'cond_prob' => $cond_prob,
-		// 	'vocab_size' => $vocab_size,
-		// 	'word_counts_by_class' => $word_counts_by_class,
-		// 	'raw_counts' => $raw_counts,
-		// 	'created_by' => Auth::user()->id,
-		// 	'created_at' => now()
-		// ];
+		$filename = 'naive-bayes/user_' . Auth::user()->id . '.json';
 
-		// $jsonData = json_encode($modelData, JSON_PRETTY_PRINT);
+		if (!Storage::disk('public')->exists($filename)) {
+			$modelData = [
+				'class_prob' => $class_prob,
+				'cond_prob' => $cond_prob,
+				'vocab_size' => $vocab_size,
+				'word_counts_by_class' => $word_counts_by_class,
+				'raw_counts' => $raw_counts,
+				'created_by' => Auth::user()->id,
+				'created_at' => now()->setTimezone('Asia/Makassar')->format('Y-m-d H:i:s')
+			];
 
-		// $filename = 'naive-bayes/user_' . Auth::user()->id . '.json';
-		// Storage::disk('public')->put($filename, $jsonData);
+			$jsonData = json_encode($modelData, JSON_PRETTY_PRINT);
+
+			Storage::disk('public')->put($filename, $jsonData);
+		}
 
 		return view('result.naive-bayes', compact(
 			'title',

@@ -13,7 +13,7 @@
       </h2>
 
       <div class="mb-8">
-        <h2 class="text-xl font-medium mb-2 text-black">Matrix</h2>
+        <h2 class="text-xl font-medium mb-2 text-black">Metrik</h2>
         <div class="overflow-auto">
           <table class="table w-full text-md border text-center">
             <thead>

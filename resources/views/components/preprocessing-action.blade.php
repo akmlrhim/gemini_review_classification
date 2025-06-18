@@ -23,13 +23,6 @@
       Import
     </button>
   </div>
-
-  <div class="w-full sm:w-auto">
-    <button type="button" onclick="window.location.href='{{ route('preprocessing.index') }}'"
-      class="w-full sm:w-auto px-4 py-2 text-sm font-bold text-blue-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 uppercase">
-      Back
-    </button>
-  </div>
 </div>
 
 {{-- modal split  --}}
