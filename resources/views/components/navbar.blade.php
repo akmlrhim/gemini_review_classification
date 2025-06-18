@@ -42,7 +42,6 @@
             <ul class="py-2 text-gray-700 dark:text-gray-400" aria-labelledby="dropdownLargeButton">
 
               <x-nav-link-dropdown href="{{ route('preprocessing.index') }}">Data Preprosesing</x-nav-link-dropdown>
-              <x-nav-link-dropdown href="{{ route('preprocessing.label') }}">Data Label</x-nav-link-dropdown>
 
               @if ($show)
                 <x-nav-link-dropdown href="{{ route('result.train-data') }}">Data Train</x-nav-link-dropdown>

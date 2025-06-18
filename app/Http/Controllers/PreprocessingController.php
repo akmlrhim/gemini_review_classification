@@ -52,25 +52,6 @@ class PreprocessingController extends Controller
 		return view('preprocessing.label.index', compact('title', 'label'));
 	}
 
-	public function editLabel(int $id)
-	{
-		$title = "Edit Label";
-		$label = DB::table('preprocessing')->find($id);
-
-		return view('preprocessing.label.edit', compact('label', 'title'));
-	}
-
-	public function updateLabel(Request $request, int $id)
-	{
-		$request->validate(['label' => 'required']);
-
-		DB::table('preprocessing')
-			->where('id', $id)
-			->update(['label' => $request->label]);
-
-		return redirect()->route('preprocessing.label')->with('success', 'Label berhasil diupdate');
-	}
-
 	public function import(Request $request)
 	{
 		$validator = Validator::make($request->all(), [

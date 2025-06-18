@@ -30,8 +30,6 @@ Route::middleware(['auth'])->group(function () {
 		Route::get('/', 'index')->name('preprocessing.index');
 		Route::get('label', 'label')->name('preprocessing.label');
 		Route::delete('delete-all', 'deleteAll')->name('preprocessing.delete.all');
-		Route::get('label/edit/{id}', 'editLabel')->name('preprocessing.label.edit')->middleware('hasData');
-		Route::put('label/update/{id}', 'updateLabel')->name('preprocessing.label.update');
 		Route::post('split-data', 'splitData')->name('preprocessing.split-data');
 		Route::post('import-csv', 'import')->name('preprocessing.import');
 		Route::get('train-data', 'trainData')->name('preprocessing.train-data');
