@@ -31,7 +31,6 @@ class PrintController extends Controller
 
 		$filename = 'preprosesing.doc';
 
-		// Set headers agar browser mengunduh sebagai Word
 		return response($html)
 			->header('Content-Type', 'application/msword')
 			->header('Content-Disposition', 'attachment;filename="' . $filename . '"');
@@ -56,7 +55,6 @@ class PrintController extends Controller
 
 		$filename = 'train.doc';
 
-		// Set headers agar browser mengunduh sebagai Word
 		return response($html)
 			->header('Content-Type', 'application/msword')
 			->header('Content-Disposition', 'attachment;filename="' . $filename . '"');
@@ -173,7 +171,6 @@ class PrintController extends Controller
 
 		$filename = 'hasil_prediksi.doc';
 
-		// Set headers agar browser mengunduh sebagai Word
 		return response($html)
 			->header('Content-Type', 'application/msword')
 			->header('Content-Disposition', 'attachment;filename="' . $filename . '"');
