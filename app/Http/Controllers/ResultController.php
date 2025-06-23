@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ResultController extends Controller
 {
@@ -91,10 +92,10 @@ class ResultController extends Controller
 			$class_prob[$label] = $count / $total_doc;
 		}
 
-		// Hitung jumlah kata per kelas dan vocab
-		$cond_prob = [];                // P(word|class)
-		$raw_counts = [];              // Count(word|class)
-		$word_counts_by_class = [];    // Total kata per kelas
+		// hitung jumlah kata per kelas dan vocab
+		$cond_prob = [];                // p(word|class)
+		$raw_counts = [];              // count(word|class)
+		$word_counts_by_class = [];    // total kata per kelas
 		$vocab = []; // total kata unik
 
 		foreach ($features as $doc_id => $terms) {
@@ -114,9 +115,7 @@ class ResultController extends Controller
 			}
 		}
 
-		$vocab_size = count($vocab);
-
-		// Hitung probabilitas kondisi dengan Laplace smoothing
+		//hitung probabilitas kondisi dengan Laplace smoothing
 		//peluang kemunculan kata dalam kelas
 		$vocab_size = count($vocab);
 
@@ -156,6 +155,121 @@ class ResultController extends Controller
 		));
 	}
 
+	public function predictedDetails()
+	{
+		$title = "Predicted Details";
+
+		$testData = DB::table('test_data')
+			->select('id', 'lemmatized', 'label')
+			->where('created_by', Auth::user()->id)
+			->get();
+
+		$trainData = DB::table('train_data')
+			->select('id', 'lemmatized', 'label')
+			->where('created_by', Auth::user()->id)
+			->get();
+
+		if ($testData->isEmpty() || $trainData->isEmpty()) {
+			return redirect()->back()->with('error', 'Data latih atau uji kosong.');
+		}
+
+		if ($testData->isEmpty() || $trainData->isEmpty()) {
+			return redirect()->back()->with('error', 'Data latih atau uji kosong.');
+		}
+
+		// Naive Bayes Training
+		$classCounts = [];
+		$wordFreq = [];
+
+		foreach ($trainData as $item) {
+			$label = $item->label;
+			$classCounts[$label] = ($classCounts[$label] ?? 0) + 1;
+
+			$cleanJson = str_replace("'", '"', $item->lemmatized);
+			$tokens = json_decode($cleanJson, true) ?: [];
+
+			foreach ($tokens as $word) {
+				$wordFreq[$label][$word] = ($wordFreq[$label][$word] ?? 0) + 1;
+			}
+		}
+
+		$totalTrainDocs = count($trainData);
+
+		$classProb = [];
+		foreach ($classCounts as $class => $count) {
+			$classProb[$class] = $count / $totalTrainDocs;
+		}
+
+		$vocab = [];
+		foreach ($wordFreq as $label => $words) {
+			foreach (array_keys($words) as $word) {
+				$vocab[$word] = true;
+			}
+		}
+
+		$vocab = array_keys($vocab);
+		$vocabSize = count($vocab);
+
+		$condProb = [];
+		foreach ($wordFreq as $class => $freqs) {
+			$totalWords = array_sum($freqs);
+			foreach ($vocab as $word) {
+				$count = $freqs[$word] ?? 0;
+				$condProb[$class][$word] = ($count + 1) / ($totalWords + $vocabSize);
+			}
+		}
+
+		$labelsActual = [];
+		$labelsPredicted = [];
+		$predictedDetails = [];
+
+		foreach ($testData as $item) {
+			$id = $item->id;
+			$actual = $item->label;
+
+			$cleanJson = str_replace("'", '"', $item->lemmatized);
+			$tokens = json_decode($cleanJson, true) ?: [];
+			$termFreq = array_count_values($tokens);
+
+			$scores = [];
+			foreach ($classProb as $class => $prior) {
+				$score = log($prior);
+				$totalWordsInClass = array_sum($wordFreq[$class] ?? []);
+
+				foreach ($termFreq as $word => $count) {
+					$prob = $condProb[$class][$word] ?? (1 / ($totalWordsInClass + $vocabSize));
+					$score += $count * log($prob);
+				}
+
+				$scores[$class] = $score;
+			}
+
+			$predicted = array_keys($scores, max($scores))[0];
+
+			$labelsActual[$id] = $actual;
+			$labelsPredicted[$id] = $predicted;
+
+			$predictedDetails[] = [
+				'ulasan' => $item->lemmatized,
+				'aktual' => $actual,
+				'prediksi' => $predicted
+			];
+		}
+
+
+		$page = request()->get('page', 1);
+		$perPage = 10;
+		$collection = collect($predictedDetails);
+		$paginatedPredictions = new LengthAwarePaginator(
+			$collection->forPage($page, $perPage),
+			$collection->count(),
+			$perPage,
+			$page,
+			['path' => request()->url(), 'query' => request()->query()]
+		);
+
+		return view('result.predicted-details', compact('title', 'paginatedPredictions'));
+	}
 
 	public function confusionMatrix(Request $request)
 	{
@@ -175,36 +289,28 @@ class ResultController extends Controller
 			return redirect()->back()->with('error', 'Data latih atau uji kosong.');
 		}
 
-		// naive bayes 
-		$classCounts = []; //jumlah dokumen per kelas
-		$wordFreq = []; // frekuensi kata per kelas
+		$classCounts = [];
+		$wordFreq = [];
 
-		//hitung frekurensi kata per kelas dari data training
 		foreach ($trainData as $item) {
 			$label = $item->label;
 			$classCounts[$label] = ($classCounts[$label] ?? 0) + 1;
 
 			$cleanJson = str_replace("'", '"', $item->lemmatized);
-
-			$tokens = json_decode($cleanJson, true);
-			if (!is_array($tokens)) {
-				$tokens = [];
-			}
+			$tokens = json_decode($cleanJson, true) ?: [];
 
 			foreach ($tokens as $word) {
 				$wordFreq[$label][$word] = ($wordFreq[$label][$word] ?? 0) + 1;
 			}
 		}
 
-		$totalTrainDocs = count($trainData); //total docs train data
+		$totalTrainDocs = count($trainData);
 
-		// hitung probabilitas prior (p|kelas)
 		$classProb = [];
 		foreach ($classCounts as $class => $count) {
 			$classProb[$class] = $count / $totalTrainDocs;
 		}
 
-		// buat daftar kata unik dari semua kelas
 		$vocab = [];
 		foreach ($wordFreq as $label => $words) {
 			foreach (array_keys($words) as $word) {
@@ -213,64 +319,53 @@ class ResultController extends Controller
 		}
 
 		$vocab = array_keys($vocab);
-		$vocabSize = count($vocab); // jumlah kata unik
+		$vocabSize = count($vocab);
 
-
-		// hitung probabilitas P(word|class) dengan menghilangkan kemungkinan nilai nol
 		$condProb = [];
 		foreach ($wordFreq as $class => $freqs) {
 			$totalWords = array_sum($freqs);
 			foreach ($vocab as $word) {
 				$count = $freqs[$word] ?? 0;
-				$condProb[$class][$word] = ($count + 1) / ($totalWords + $vocabSize); // laplace smoothing
+				$condProb[$class][$word] = ($count + 1) / ($totalWords + $vocabSize);
 			}
 		}
 
-		// prediksi label dengan model (data training)
-		$labelsActual = []; // simpan label asli dari datatest
-		$labelsPredicted = []; // simpan hasil prediksi label model
+		$labelsActual = [];
+		$labelsPredicted = [];
+		$predictedDetails = [];
 
 		foreach ($testData as $item) {
 			$id = $item->id;
-			$labelsActual[$id] = $item->label;
+			$actual = $item->label;
 
 			$cleanJson = str_replace("'", '"', $item->lemmatized);
-
-			$tokens = json_decode($cleanJson, true);
-
-			if (!is_array($tokens)) {
-				$tokens = [];
-			}
-			$termFreq = array_count_values($tokens); // hitung frekuensi kata dalam dokumen
+			$tokens = json_decode($cleanJson, true) ?: [];
+			$termFreq = array_count_values($tokens);
 
 			$scores = [];
-
-			//hitung skor log probabilitas untuk setiap kelas
 			foreach ($classProb as $class => $prior) {
-				$score = log($prior); // log(P(class))
+				$score = log($prior);
 				$totalWordsInClass = array_sum($wordFreq[$class] ?? []);
 
 				foreach ($termFreq as $word => $count) {
-					// probabilitas sudah dihitung dengan smoothing, untuk menghindari nilai nol
 					$prob = $condProb[$class][$word] ?? (1 / ($totalWordsInClass + $vocabSize));
-					$score += $count * log($prob); // log(P(word|class))^count
+					$score += $count * log($prob);
 				}
 
 				$scores[$class] = $score;
 			}
 
-			// ambil kelas dengan skor tertinggi sebagai prediksi
-			$labelsPredicted[$id] = array_keys($scores, max($scores))[0];
+			$predicted = array_keys($scores, max($scores))[0];
+
+			$labelsActual[$id] = $actual;
+			$labelsPredicted[$id] = $predicted;
 		}
 
-		// CONFUSION MATRIX 
-		//ambil semua kelas unik dari label asli dan prediksi
 		$classes = array_values(array_unique(array_merge(
 			array_values($labelsActual),
 			array_values($labelsPredicted)
 		)));
 
-		//init confusion matrix
 		$confMatrix = [];
 		foreach ($classes as $actual) {
 			$confMatrix[$actual] = array_fill_keys($classes, 0);
@@ -281,7 +376,6 @@ class ResultController extends Controller
 			$confMatrix[$actual][$predicted]++;
 		}
 
-		//metrik
 		$metrics = [];
 		$totalTest = count($testData);
 		$correct = 0;
@@ -312,14 +406,7 @@ class ResultController extends Controller
 			'classes',
 			'metrics',
 			'accuracy',
-			'title'
+			'title',
 		));
-	}
-
-	public function predictLabel(Request $request)
-	{
-		$request->validate([
-			'sentence' => 'required'
-		]);
 	}
 }

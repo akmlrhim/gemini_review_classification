@@ -15,21 +15,21 @@
       <div class="mb-8">
         <h2 class="text-xl font-medium mb-2 text-black">Metrik</h2>
         <div class="overflow-auto">
-          <table class="table w-full text-md border text-center">
+          <table class="table w-full text-md text-center">
             <thead>
               <tr class="bg-gray-200">
-                <th class="border px-3 py-1">Aktual | prediksi</th>
+                <th class="px-3 py-1">Aktual | prediksi</th>
                 @foreach ($classes as $pred)
-                  <th class="border px-3 py-1">{{ $pred }}</th>
+                  <th class="px-3 py-1">{{ $pred }}</th>
                 @endforeach
               </tr>
             </thead>
             <tbody>
               @foreach ($classes as $actual)
                 <tr>
-                  <th class="border px-3 py-1 bg-gray-100">{{ $actual }}</th>
+                  <th class="px-3 py-1 bg-gray-100">{{ $actual }}</th>
                   @foreach ($classes as $pred)
-                    <td class="border px-3 py-1">{{ $confMatrix[$actual][$pred] }}</td>
+                    <td class="px-3 py-1">{{ $confMatrix[$actual][$pred] }}</td>
                   @endforeach
                 </tr>
               @endforeach
@@ -37,6 +37,8 @@
           </table>
         </div>
       </div>
+
+
 
       <div>
         <h2 class="text-xl font-medium mb-2 text-black">Metrik Per Kelas</h2>

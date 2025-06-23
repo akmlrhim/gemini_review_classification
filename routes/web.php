@@ -1,14 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ImportController;
 use App\Http\Controllers\ResultController;
-use App\Http\Controllers\DatasetController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PreprocessingController;
+use App\Http\Controllers\PrintController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
@@ -40,14 +38,18 @@ Route::middleware(['auth'])->group(function () {
 		Route::get('train-data', 'trainData')->name('result.train-data');
 		Route::get('test-data', 'testData')->name('result.test-data');
 		Route::get('naive-bayes', 'naiveBayes')->name('result.naive-bayes');
+		Route::get('predicted-details', 'predictedDetails')->name('result.predicted-details');
 		Route::get('confusion-matrix', 'confusionMatrix')->name('result.confusion-matrix');
 	});
-
-
 
 	Route::prefix('my-profile')->group(function () {
 		Route::get('/', [ProfileController::class, 'index'])->name('my-profile.index');
 		Route::patch('update', [ProfileController::class, 'update'])->name('my-profile.update');
 		Route::patch('update-password', [ProfileController::class, 'updatePassword'])->name('my-profile.update.password');
 	});
+
+	Route::get('print-prp', [PrintController::class, 'preprocessing']);
+	Route::get('print-train', [PrintController::class, 'trainData']);
+	Route::get('print-test', [PrintController::class, 'testData']);
+	Route::get('print-predicted', [PrintController::class, 'predictedDetails']);;
 });

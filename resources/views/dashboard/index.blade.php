@@ -20,7 +20,7 @@
 
     <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 flex flex-col justify-center items-center">
       <h2 class="text-md font-medium text-gray-700 mb-2 text-center">Jumlah data</h2>
-      <p class="text-xl font-bold text-red-600">{{ $totalData }}</p>
+      <p class="text-xl font-bold text-black italic">{{ $totalData }}</p>
     </div>
 
     <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 md:col-span-3">

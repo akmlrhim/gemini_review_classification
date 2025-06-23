@@ -51,7 +51,7 @@
             <select name="train_data" id="train_data"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
               <option value="">Pilih persentase train data</option>
-              @foreach ([60, 70, 80, 90] as $percent)
+              @foreach ([60, 65, 70, 75, 80, 85, 90] as $percent)
                 <option value="{{ $percent }}" {{ old('train_data') == $percent ? 'selected' : '' }}>
                   {{ $percent }}%
                 </option>

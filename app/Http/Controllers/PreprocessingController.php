@@ -41,17 +41,6 @@ class PreprocessingController extends Controller
 		return redirect()->route('preprocessing.index')->with('success', 'Data berhasil dihapus');
 	}
 
-	public function label()
-	{
-		$title = "Labeling";
-		$label = DB::table('preprocessing')
-			->select('id', 'case_folding', 'label')
-			->where('created_by', Auth::user()->id)
-			->paginate(20);
-
-		return view('preprocessing.label.index', compact('title', 'label'));
-	}
-
 	public function import(Request $request)
 	{
 		$validator = Validator::make($request->all(), [
@@ -162,6 +151,6 @@ class PreprocessingController extends Controller
 			]);
 		}
 
-		return redirect()->back()->with('success', 'Data berhasil di-split menjadi training dan testing.');
+		return redirect()->route('result.confusion-matrix')->with('success', 'Data berhasil di-split menjadi training dan testing.');
 	}
 }

@@ -57,6 +57,22 @@
             Review</x-nav-link>
           <x-nav-link href="{{ route('result.naive-bayes') }}">Naive Bayes Clsf.</x-nav-link>
           <x-nav-link href="{{ route('result.confusion-matrix') }}">Conf. Matrix</x-nav-link>
+
+          {{-- <li>
+            <button id="cfLink" data-dropdown-toggle="cfDropdown"
+              class="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">Conf.
+              Matrix
+            </button>
+            <div id="cfDropdown"
+              class="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
+              <ul class="py-2 text-gray-700 dark:text-gray-400" aria-labelledby="dropdownLargeButton">
+                <x-nav-link-dropdown href="{{ route('result.predicted-details') }}">Predicted
+                  Details</x-nav-link-dropdown>
+                <x-nav-link-dropdown href="{{ route('result.confusion-matrix') }}">Confusion
+                  Matrix</x-nav-link-dropdown>
+              </ul>
+            </div>
+          </li> --}}
         @endif
 
 

@@ -2,7 +2,7 @@
   <x-slot:title>{{ $title }}</x-slot:title>
 
   <div class="max-w-6xl mx-auto py-4 px-6">
-    <div class="bg-white shadow-md rounded-lg p-6 mb-8  -gray-200">
+    <div class="bg-white shadow-md rounded-lg p-6 mb-8">
       <h2 class="text-md font-semibold text-gray-800 mb-4 uppercase">Hasil Naive Bayes</h2>
       <ul class="list-disc list-inside space-y-2 text-gray-700 text-sm">
         @foreach ($class_prob as $class => $prob)
