@@ -26,7 +26,6 @@ class PrintController extends Controller
 
 		// return $pdf->stream('preprosesing' . time() . '.pdf');
 
-
 		$html = View::make('print.preprosesing', $data)->render();
 
 		$filename = 'preprosesing.doc';
