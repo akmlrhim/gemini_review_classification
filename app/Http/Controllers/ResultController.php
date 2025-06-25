@@ -306,11 +306,14 @@ class ResultController extends Controller
 
 		$totalTrainDocs = count($trainData);
 
+		//prior probabilities P(class)
+		//menghitung probabilitas kelas
 		$classProb = [];
 		foreach ($classCounts as $class => $count) {
 			$classProb[$class] = $count / $totalTrainDocs;
 		}
 
+		//menghitung total kata per kelas dan vocab
 		$vocab = [];
 		foreach ($wordFreq as $label => $words) {
 			foreach (array_keys($words) as $word) {
@@ -321,6 +324,8 @@ class ResultController extends Controller
 		$vocab = array_keys($vocab);
 		$vocabSize = count($vocab);
 
+		//likelihood probabilities P(word|class)
+		//menghitung probabilitas kondisi dengan Laplace smoothing
 		$condProb = [];
 		foreach ($wordFreq as $class => $freqs) {
 			$totalWords = array_sum($freqs);
@@ -342,6 +347,8 @@ class ResultController extends Controller
 			$tokens = json_decode($cleanJson, true) ?: [];
 			$termFreq = array_count_values($tokens);
 
+
+			// posterior probabilities P(class|words)
 			$scores = [];
 			foreach ($classProb as $class => $prior) {
 				$score = log($prior);
