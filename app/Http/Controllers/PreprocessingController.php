@@ -87,7 +87,7 @@ class PreprocessingController extends Controller
 			$tokenize = $column[1];
 			$stopword = $column[2];
 			$lemmatized = $column[3];
-			$label = $column[4];
+			$label = $column[5];
 
 			$preprocessing = new Preprocessing();
 			$preprocessing->case_folding = $case_folding;

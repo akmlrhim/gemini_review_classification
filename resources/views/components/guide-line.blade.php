@@ -23,7 +23,7 @@
         <ul class="space-y-1 text-sm text-gray-700 list-disc list-inside dark:text-gray-400">
           <li>
             Masuk ke link <a class="text-blue-600 hover:underline dark:text-blue-500"
-              href="https://colab.research.google.com/drive/1DalW5QcK8ITkN99Lgm3nrwrZOaHN9j8F?usp=sharing"
+              href="https://colab.research.google.com/drive/16jgRFOSiPi4aLncTEVtZzvKmC_VD47j2?usp=sharing"
               target="_blank">Google Colab</a> untuk melakukan pengambilan dan pembersihan data.
           </li>
           <li>
