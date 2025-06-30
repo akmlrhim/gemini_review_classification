@@ -115,8 +115,6 @@ class ResultController extends Controller
 			}
 		}
 
-		//hitung probabilitas kondisi dengan Laplace smoothing
-		//peluang kemunculan kata dalam kelas
 		$vocab_size = count($vocab);
 
 		foreach ($cond_prob as $label => $word_counts) {

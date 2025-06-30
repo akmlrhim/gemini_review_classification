@@ -38,7 +38,9 @@ class PreprocessingController extends Controller
 			->where('created_by', Auth::user()->id)
 			->delete();
 
-		return redirect()->route('preprocessing.index')->with('success', 'Data berhasil dihapus');
+		return redirect()
+			->route('preprocessing.index')
+			->with('success', 'Data berhasil dihapus');
 	}
 
 	public function import(Request $request)
