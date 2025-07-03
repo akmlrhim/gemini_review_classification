@@ -8,23 +8,29 @@
   @endif
 
   <div class="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 flex flex-col justify-center items-center">
-      <h2 class="text-md font-medium text-gray-700 mb-2 text-center">Jumlah data latih / train</h2>
+    <div
+      class="bg-white rounded-xl shadow-md border border-gray-200 p-6 flex flex-col justify-center items-center">
+      <h2 class="text-sm font-medium text-gray-700 mb-2 text-center">Jumlah data latih /
+        train</h2>
       <p class="text-xl font-bold text-blue-600">{{ $trainData }}</p>
     </div>
 
-    <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 flex flex-col justify-center items-center">
-      <h2 class="text-md font-medium text-gray-700 mb-2 text-center">Jumlah Data uji / test</h2>
+    <div
+      class="bg-white rounded-xl shadow-md border border-gray-200 p-6 flex flex-col justify-center items-center">
+      <h2 class="text-sm font-medium text-gray-700 mb-2 text-center">Jumlah Data uji / test
+      </h2>
       <p class="text-xl font-bold text-red-600">{{ $testData }}</p>
     </div>
 
-    <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 flex flex-col justify-center items-center">
-      <h2 class="text-md font-medium text-gray-700 mb-2 text-center">Jumlah data</h2>
+    <div
+      class="bg-white rounded-xl shadow-md border border-gray-200 p-6 flex flex-col justify-center items-center">
+      <h2 class="text-sm font-medium text-gray-700 mb-2 text-center">Jumlah data</h2>
       <p class="text-xl font-bold text-black italic">{{ $totalData }}</p>
     </div>
 
     <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 md:col-span-3">
-      <h2 class="text-md font-medium text-gray-700 mb-4 text-center">Perbandingan jumlah label</h2>
+      <h2 class="text-sm font-medium text-gray-700 mb-4 text-center">Perbandingan jumlah
+        label</h2>
       <div class="relative overflow-x-auto rounded-md">
         <canvas id="labelChart" class="w-[500px] h-[300px] mx-auto"></canvas>
       </div>

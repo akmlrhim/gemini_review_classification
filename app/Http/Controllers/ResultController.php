@@ -254,7 +254,6 @@ class ResultController extends Controller
 			];
 		}
 
-
 		$page = request()->get('page', 1);
 		$perPage = 10;
 		$collection = collect($predictedDetails);

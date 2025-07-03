@@ -7,10 +7,11 @@
       <ul class="list-disc list-inside space-y-2 text-gray-700 text-sm">
         @foreach ($class_prob as $class => $prob)
           <li>
-            <span class="font-medium">Probabilitas kelas {{ $class }}:</span>
+            <span class="font-medium text-sm">Probabilitas kelas
+              {{ $class }}:</span>
             {{ number_format($prob * 100, 2) . '%' }}
           </li>
-          <li class="ml-6 text-gray-600">
+          <li class="ml-6 font-medium text-sm text-gray-600">
             Total kata dalam kelas {{ $class }}:
             {{ $word_counts_by_class[$class] }}
           </li>
@@ -22,24 +23,26 @@
     <div class="space-y-6">
       @foreach ($cond_prob as $class => $word_probs)
         <div class="bg-gray-50 rounded-lg p-4 shadow-sm">
-          <h3 class="text-md font-semibold text-black mb-3">Kelas : {{ $class }}</h3>
+          <h3 class="text-md font-semibold text-black mb-3">Kelas : {{ $class }}
+          </h3>
           <div class="overflow-x-auto max-h-96 overflow-y-scroll text-sm">
             <table class="min-w-full text-center border-b text-gray-700">
               <thead class="bg-gray-200 text-gray-600 font-semibold sticky top-0">
                 <tr>
-                  <th class="px-4 py-2 ">Kata</th>
-                  <th class="px-4 py-2 ">Frekuensi</th>
-                  <th class="px-4 py-2 ">Probabilitas <i>likelihood</i></th>
+                  <th class="px-4 py-2">Kata</th>
+                  <th class="px-4 py-2">Frekuensi</th>
+                  <th class="px-4 py-2">Probabilitas <i>likelihood</i></th>
                 </tr>
               </thead>
               <tbody>
                 @foreach ($word_probs as $word => $prob)
-                  <tr class="-b">
-                    <td class="px-4 py-1 ">{{ str_replace(['[', ']', "'", '"', ','], '', $word) }}</td>
+                  <tr class="font-medium text-sm">
+                    <td class="px-4 py-1">
+                      {{ str_replace(['[', ']', "'", '"', ','], '', $word) }}</td>
                     <td class="px-4 py-1  text-center">
                       {{ $raw_counts[$class][$word] ?? 0 }}
                     </td>
-                    <td class="px-4 py-1  text-center">
+                    <td class="px-4 py-1 text-center">
                       {{ number_format($prob, 6) }}
                     </td>
                   </tr>

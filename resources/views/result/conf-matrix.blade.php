@@ -6,16 +6,17 @@
   @if (empty($confMatrix))
     <x-empty-data></x-empty-data>
   @else
-    <div class="max-w-6xl mx-auto py-4 bg-white shadow-md rounded-lg p-6 mb-4 border border-gray-200">
+    <div
+      class="max-w-6xl mx-auto py-4 bg-white shadow-md rounded-lg p-6 mb-4 border border-gray-200">
       <h2 class="text-md font-medium mb-6 text-green-800">Akurasi :
         <span
           class="bg-green-100 text-green-800 text-lg font-bold me-2 px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-green-400 border border-green-400">{{ number_format($accuracy * 100, 2) }}%</span>
       </h2>
 
       <div class="mb-8">
-        <h2 class="text-xl font-medium mb-2 text-black">Metrik</h2>
+        <h2 class="text-md font-medium mb-2 text-black">Metrik</h2>
         <div class="overflow-auto">
-          <table class="table w-full text-md text-center">
+          <table class="w-full text-sm font-medium text-center">
             <thead>
               <tr class="bg-gray-200">
                 <th class="px-3 py-1">Aktual | prediksi</th>
@@ -26,7 +27,7 @@
             </thead>
             <tbody>
               @foreach ($classes as $actual)
-                <tr>
+                <tr class="font-medium text-sm">
                   <th class="px-3 py-1 bg-gray-100">{{ $actual }}</th>
                   @foreach ($classes as $pred)
                     <td class="px-3 py-1">{{ $confMatrix[$actual][$pred] }}</td>
@@ -38,15 +39,14 @@
         </div>
       </div>
 
-
-
       <div>
-        <h2 class="text-xl font-medium mb-2 text-black">Metrik Per Kelas</h2>
+        <h2 class="text-md font-medium mb-2 text-black">Metrik Per Kelas</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           @foreach ($metrics as $class => $m)
             <div class="bg-white rounded-lg p-4 border border-gray-900">
-              <h3 class="text-sm font-extrabold mb-2 text-black">{{ $class }}</h3>
-              <ul class="space-y-1 capitalize text-black text-sm">
+              <h3 class="text-sm font-bold capitalize mb-2 text-black">{{ $class }}
+              </h3>
+              <ul class="space-y-1 capitalize text-black text-sm font-medium">
                 <li>presisi : {{ $m['precision'] }} %</li>
                 <li>recall : {{ $m['recall'] }} %</li>
                 <li>f1 score : {{ $m['f1_score'] }} %</li>
@@ -72,23 +72,25 @@
           <button type="button"
             class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
             data-modal-hide="split-modal">
-            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-              viewBox="0 0 14 14">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+              fill="none" viewBox="0 0 14 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
             </svg>
             <span class="sr-only">Close modal</span>
           </button>
         </div>
         <div class="p-4 md:p-5">
-          <form class="space-y-4" action="{{ route('preprocessing.split-data') }}" method="POST">
+          <form class="space-y-4" action="{{ route('preprocessing.split-data') }}"
+            method="POST">
             @csrf
             <div>
               <select name="train_data" id="train_data"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                 <option value="">Pilih persentase train data</option>
                 @foreach ([60, 70, 80, 90] as $percent)
-                  <option value="{{ $percent }}" {{ old('train_data') == $percent ? 'selected' : '' }}>
+                  <option value="{{ $percent }}"
+                    {{ old('train_data') == $percent ? 'selected' : '' }}>
                     {{ $percent }}%
                   </option>
                 @endforeach

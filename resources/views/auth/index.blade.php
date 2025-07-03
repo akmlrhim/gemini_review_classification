@@ -14,31 +14,37 @@
   @endif
 </head>
 
-<body class="font-sans antialiased flex dark:bg-gray-900 items-center justify-center min-h-screen overflow-auto">
+<body
+  class="font-sans antialiased flex dark:bg-gray-900 items-center justify-center min-h-screen overflow-auto">
   <section class="w-full max-w-md px-6">
     <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
 
-      <h2 class="mb-4 text-3xl font-bold text-gray-900 dark:text-white text-center">{{ $title }}</h2>
+      <h2 class="mb-4 text-3xl font-bold text-gray-900 dark:text-white text-center">
+        {{ $title }}</h2>
 
       <x-alert></x-alert>
 
-      <form class="space-y-4 text-sm" action="{{ route('login.process') }}" method="POST">
+      <form class="space-y-4 text-sm" action="{{ route('login.process') }}"
+        method="POST">
         @csrf
         <div>
-          <label for="email" class="block mb-2 font-medium text-gray-900 dark:text-white capitalize">email <span
-              class="text-red-800">*</span></label>
+          <label for="email"
+            class="block mb-2 font-medium text-gray-900 dark:text-white capitalize">email
+            <span class="text-red-800">*</span></label>
           <input type="email" name="email" id="email"
-            class="text-sm bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="text-sm font-medium bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="masukkan email" autocomplete="off" value="{{ old('email') }}">
           @error('email')
             <small class="text-red-500">{{ $message }}</small>
           @enderror
         </div>
         <div>
-          <label for="password" class="block mb-2 font-medium text-gray-900 dark:text-white capitalize">password <span
-              class="text-red-800">*</span></label>
-          <input type="password" name="password" id="password" placeholder="masukkan password"
-            class="text-sm bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          <label for="password"
+            class="block mb-2 font-medium text-gray-900 dark:text-white capitalize">password
+            <span class="text-red-800">*</span></label>
+          <input type="password" name="password" id="password"
+            placeholder="masukkan password"
+            class="text-sm font-medium bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             autocomplete="off">
           @error('password')
             <small class="text-red-500">{{ $message }}</small>
@@ -46,11 +52,13 @@
         </div>
 
         <button type="submit"
-          class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          class="w-full text-sm text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
           Login
         </button>
 
-        <a href="{{ route('register') }}" class="text-blue-700 hover:underline">Belum punya akun?, register</a>
+        <a href="{{ route('register') }}"
+          class="text-blue-700 hover:underline font-medium text-xs">Belum
+          punya akun?, register</a>
       </form>
     </div>
   </section>
