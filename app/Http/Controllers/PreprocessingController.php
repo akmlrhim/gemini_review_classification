@@ -106,6 +106,7 @@ class PreprocessingController extends Controller
 	{
 		$validator = Validator::make($request->all(), [
 			'train_data' => 'required|numeric|min:0|max:100',
+			'random_seed' => 'required|numeric',
 		]);
 
 		if ($validator->fails()) {
@@ -116,6 +117,7 @@ class PreprocessingController extends Controller
 		}
 
 		$trainDataRatio = $request->train_data / 100;
+		$randomSeed = $request->random_seed;
 
 		$preprocessedData = DB::table('preprocessing')
 			->where('created_by', Auth::id())
@@ -126,7 +128,7 @@ class PreprocessingController extends Controller
 			return redirect()->back()->with('error', 'Jumlah data kurang dari 2, tidak bisa dibagi.');
 		}
 
-		srand(123); // 1, 10, 42, 123, 1000
+		srand($randomSeed); // 1, 10, 42, 123, 1000
 		shuffle($preprocessedData);
 
 		$total = count($preprocessedData);

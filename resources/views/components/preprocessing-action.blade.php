@@ -50,10 +50,13 @@
         </button>
       </div>
       <div class="p-4 md:p-5">
-        <form class="space-y-4" action="{{ route('preprocessing.split-data') }}"
+        <form class="space-y-5" action="{{ route('preprocessing.split-data') }}"
           method="POST">
           @csrf
           <div>
+            <label for="train_data"
+              class="block mb-2 text-sm font-medium text-gray-800 dark:text-white">Persentase
+              data latih</label>
             <select name="train_data" id="train_data"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm font-medium rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
               <option value="">Pilih persentase train data</option>
@@ -65,6 +68,19 @@
               @endforeach
             </select>
             @error('train_data')
+              <small class="text-red-500 text-xs font-medium"> {{ $message }}</small>
+            @enderror
+          </div>
+          <div>
+            <label for="random_seed"
+              class="block text-sm font-medium text-gray-900 dark:text-white">Random
+              Seed</label>
+            <small class="text-gray-600 font-medium text-xs">Value:
+              0,1,42,123,999</small>
+            <input type="number" name="random_seed" id="random_seed"
+              value="{{ old('random_seed') }}" placeholder="Masukkan random seed"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm font-medium rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
+            @error('random_seed')
               <small class="text-red-500 text-xs font-medium"> {{ $message }}</small>
             @enderror
           </div>
