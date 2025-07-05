@@ -6,7 +6,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ResultController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PreprocessingController;
-use App\Http\Controllers\PrintController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
