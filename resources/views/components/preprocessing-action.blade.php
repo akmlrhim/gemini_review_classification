@@ -111,7 +111,7 @@
               value="{{ old('file') }}"
               class="w-full text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" />
             @error('file')
-              <small class="text-red-500 text-xs"> {{ $message }}</small>
+              <small class="text-red-500 font-medium text-xs"> {{ $message }}</small>
             @enderror
           </div>
 
