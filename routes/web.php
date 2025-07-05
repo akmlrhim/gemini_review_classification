@@ -47,9 +47,4 @@ Route::middleware(['auth'])->group(function () {
 		Route::patch('update', [ProfileController::class, 'update'])->name('my-profile.update');
 		Route::patch('update-password', [ProfileController::class, 'updatePassword'])->name('my-profile.update.password');
 	});
-
-	Route::get('print-prp', [PrintController::class, 'preprocessing']);
-	Route::get('print-train', [PrintController::class, 'trainData']);
-	Route::get('print-test', [PrintController::class, 'testData']);
-	Route::get('print-predicted', [PrintController::class, 'predictedDetails']);;
 });
