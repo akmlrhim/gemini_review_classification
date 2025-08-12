@@ -125,22 +125,36 @@ class ResultController extends Controller
 		}
 
 		// simpan hasil pelatihan 
-		$filename = 'naive-bayes/user_' . Auth::user()->id . '.json';
+		$directory = 'result/naive-bayes-models';
+		if (!Storage::disk('public')->exists($directory)) {
+			Storage::disk('public')->makeDirectory($directory);
+		}
 
-		if (!Storage::disk('public')->exists($filename)) {
-			$modelData = [
-				'class_prob' => $class_prob,
-				'cond_prob' => $cond_prob,
+		$timestamp = now()->setTimezone('Asia/Makassar')->format('Y-m-d_H-i-s');
+		$filename = $directory . '/nb_model_user_' . Auth::id() . '_' . $timestamp . '.json';
+
+		$modelData = [
+			'model_info' => [
+				'algorithm' => 'Naive Bayes',
+				'total_documents' => $total_doc,
 				'vocab_size' => $vocab_size,
-				'word_counts_by_class' => $word_counts_by_class,
-				'raw_counts' => $raw_counts,
+				'classes' => array_keys($class_prob),
 				'created_by' => Auth::user()->id,
 				'created_at' => now()->setTimezone('Asia/Makassar')->format('Y-m-d H:i:s')
-			];
+			],
+			'model_parameters' => [
+				'class_probabilities' => $class_prob,
+				'conditional_probabilities' => $cond_prob,
+				'vocabulary' => array_keys($vocab),
+				'word_counts_by_class' => $word_counts_by_class,
+				'raw_word_counts' => $raw_counts
+			]
+		];
 
-			$jsonData = json_encode($modelData, JSON_PRETTY_PRINT);
+		$saveResult = Storage::disk('public')->put($filename, json_encode($modelData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-			Storage::disk('public')->put($filename, $jsonData);
+		if (!$saveResult) {
+			return redirect()->back()->with('error', 'Gagal menyimpan model pelatihan.');
 		}
 
 		return view('result.naive-bayes', compact(
